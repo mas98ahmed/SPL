@@ -3,14 +3,19 @@
 
 #include <vector>
 
-class Graph{
+using namespace std;
+
+class Graph {
 public:
-    Graph(std::vector<std::vector<int>> matrix);
-    
+    Graph(vector<vector<int>> matrix);
+    Graph();
+
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);
+
 private:
-    std::vector<std::vector<int>>> edges;
-}
+    vector<vector<int>> edges;
+    vector<int> *InfectedNodes;
+};
 
 #endif

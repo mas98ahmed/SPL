@@ -80,10 +80,28 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/Include/Agent.h">
+			<Option target="Assignment1"/>
+		</Unit>
+		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/Include/Graph.h">
+			<Option target="Assignment1"/>
+		</Unit>
 		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/Include/Session.h">
 			<Option target="Assignment1"/>
 		</Unit>
+		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/Include/Tree.h">
+			<Option target="Assignment1"/>
+		</Unit>
 		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/main.cpp">
+			<Option target="Assignment1"/>
+		</Unit>
+		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/src/Agent.cpp">
+			<Option target="Assignment1"/>
+		</Unit>
+		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/src/Graph.cpp">
+			<Option target="Assignment1"/>
+		</Unit>
+		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/src/Session.cpp">
 			<Option target="Assignment1"/>
 		</Unit>
 		<Unit filename="C:/Users/mas98/Desktop/SPL/Assignment1/CMakeLists.txt">

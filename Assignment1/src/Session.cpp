@@ -2,15 +2,20 @@
 
 using namespace std;
 
-Session::Session(const string &path) :agents(vector<Agent *>()) {
+Session::Session(const string &path) : agents(vector<Agent *>()) {
     ifstream is(path);
     nlohmann::json file;
     is >> file;
     int c = 0;
+    Agent *a;
     //Entering the agents data.
     while (file["agents"][c] != nullptr) {
         int nodeId = file["agents"][c][1];
-        Agent *a = file["agents"][c][0] == "V" ? new Virus(nodeId, *this) : new ContactTracer();
+        if (file["agents"][c][0] == "V") {
+            a = new Virus(nodeId, *this);
+        } else {
+            a = new ContactTracer(*this);
+        }
         this->agents.push_back(a);
         c++;
     }
@@ -31,7 +36,7 @@ Session::Session(const string &path) :agents(vector<Agent *>()) {
         line->clear();
         i++;
     }
-    this->g = new Graph(*matrix);
+    this->g = Graph(*matrix);
     //========================================================================================================
     //Entering the TreeType data.
     if (file["tree"] == "M") {
@@ -43,7 +48,21 @@ Session::Session(const string &path) :agents(vector<Agent *>()) {
             this->treeType = Root;
         }
     }
-
 }
 
+void Session::addAgent(const Agent &agent) { agent.addAgentVisit(); }
 
+void Session::addAgent(Agent *agent) {
+    Agent *a = agent;
+    agents.push_back(a);
+}
+
+void Session::setGraph(const Graph &graph) { this->g = graph; }
+
+void Session::enqueueInfected(int node) {}
+
+int Session::dequeueInfected() {}
+
+TreeType Session::getTreeType() const { return treeType; }
+
+void Session::simulate() {}

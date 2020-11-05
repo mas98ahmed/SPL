@@ -2,6 +2,10 @@
 #define TREE_H_
 
 #include <vector>
+#include "Session.h"
+
+using namespace std;
+
 
 class Session;
 
@@ -15,8 +19,8 @@ public:
     virtual int traceTree()=0;
 private:
     int node;
-    std::vector<Tree*> children;
-}
+    vector<Tree*> children;
+};
 
 class CycleTree: public Tree{
 public:
@@ -24,18 +28,19 @@ public:
     virtual int traceTree();
 private:
     int currCycle;
-}
+};
 
 class MaxRankTree: public Tree{
 public:
     MaxRankTree(int rootLabel);
     virtual int traceTree();
-}
+};
 
 class RootTree: public Tree{
 public:
     RootTree(int rootLabel);
+    RootTree();
     virtual int traceTree();
-}
+};
 
 #endif

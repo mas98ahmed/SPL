@@ -4,8 +4,11 @@
 #include <vector>
 #include <string>
 #include "Graph.h"
+#include "json.hpp"
+#include "Agent.h"
+#include <fstream>
 
-class Agent;
+using namespace std;
 
 enum TreeType{
   Cycle,
@@ -15,20 +18,20 @@ enum TreeType{
 
 class Session{
 public:
-    Session(const std::string& path);
+    Session(const string& path);
     
     void simulate();
     void addAgent(const Agent& agent);
+    void addAgent(Agent* agent);
     void setGraph(const Graph& graph);
-    
-    void enqueueInfected(int);
+    void enqueueInfected(int node);
     int dequeueInfected();
-    TreeType getTreeType();
+    TreeType getTreeType() const;
     
 private:
     Graph g;
     TreeType treeType;
-    std::vector<Agent*> agents;
-}
+    vector<Agent*> agents;
+};
 
 #endif

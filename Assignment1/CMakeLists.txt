@@ -3,4 +3,9 @@ project(Assignment1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(Assignment1 main.cpp Include/Session.h)
+add_executable(Assignment1 main.cpp
+        Include/Session.h
+        Include/Agent.h
+        Include/Graph.h
+        Include/Tree.h
+        src/Session.cpp src/Graph.cpp src/Agent.cpp)
