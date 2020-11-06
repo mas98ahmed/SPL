@@ -12,10 +12,11 @@ public:
 
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);
+    vector<vector<int>> getEdges() const;
 
 private:
     vector<vector<int>> edges;
-    vector<int> *InfectedNodes;
+    vector<int> InfectedNodes;
 };
 
 #endif

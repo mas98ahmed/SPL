@@ -3,23 +3,13 @@
 using namespace std;
 
 Session::Session(const string &path) : agents(vector<Agent *>()) {
+    //Openning a stream to the file.
     ifstream is(path);
     nlohmann::json file;
     is >> file;
-    int c = 0;
-    Agent *a;
-    //Entering the agents data.
-    while (file["agents"][c] != nullptr) {
-        int nodeId = file["agents"][c][1];
-        if (file["agents"][c][0] == "V") {
-            a = new Virus(nodeId, *this);
-        } else {
-            a = new ContactTracer(*this);
-        }
-        this->agents.push_back(a);
-        c++;
-    }
+
     //========================================================================================================
+
     int i = 0;
     int j = 0;
     //The matrix of the graph.
@@ -37,8 +27,28 @@ Session::Session(const string &path) : agents(vector<Agent *>()) {
         i++;
     }
     this->g = Graph(*matrix);
+
+    //========================================================================================================
+    //Entering the Agents data.
+    int c = 0;
+    Agent *a;
+    InfectedNodes = queue<int>();
+    //Entering the agents data.
+    while (file["agents"][c] != nullptr) {
+        int nodeId = file["agents"][c][1];
+        if (file["agents"][c][0] == "V") {
+            a = new Virus(nodeId, *this);
+            enqueueInfected(nodeId);
+        } else {
+            a = new ContactTracer(*this);
+        }
+        this->agents.push_back(a);
+        c++;
+    }
+
     //========================================================================================================
     //Entering the TreeType data.
+
     if (file["tree"] == "M") {
         this->treeType = MaxRank;
     } else {
@@ -59,10 +69,26 @@ void Session::addAgent(Agent *agent) {
 
 void Session::setGraph(const Graph &graph) { this->g = graph; }
 
-void Session::enqueueInfected(int node) {}
+void Session::enqueueInfected(int node) {
+    InfectedNodes.push(node);
+    g.infectNode(node);
+}
 
-int Session::dequeueInfected() {}
+int Session::dequeueInfected() {
+    if (!InfectedNodes.empty()) {
+        int node = InfectedNodes.front();
+        InfectedNodes.pop();
+        return node;
+    }
+    return -1;
+}
 
 TreeType Session::getTreeType() const { return treeType; }
 
-void Session::simulate() {}
+Graph Session::getGraph() const {
+    return g;
+}
+
+void Session::simulate() {
+
+}
