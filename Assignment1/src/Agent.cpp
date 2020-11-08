@@ -28,14 +28,16 @@ Virus::Virus(int nodeInd, Session &session) : nodeInd(nodeInd), Agent(session) {
 Virus::Virus(Virus &other) : nodeInd(other.getNode()), Agent(other.getSession()) {}
 
 void Virus::act() {
+    session.enqueueInfected(nodeInd);
     vector<int> neighbors = session.getGraph().getEdges().at(nodeInd);
-    int size = neighbors.size();
     bool stop = false;
-    for (int i = 0; i < size && !stop; i++) {
+    int i = 0;
+    while(i < neighbors.size() && !stop) {
         if (!session.getGraph().isInfected(i)) {
-            session.enqueueInfected(nodeInd);
+            session.addAgent(i);
             stop = true;
         }
+        i++;
     }
 }
 

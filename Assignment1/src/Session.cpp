@@ -1,7 +1,7 @@
 #include "../Include/Session.h"
 
 
-Session::Session(const string &path) : agents(vector<Agent *>()) {
+Session::Session(const string &path) : g(), treeType(), agents() {
     //Openning a stream to the file.
     ifstream is(path);
     nlohmann::json file;
@@ -12,20 +12,20 @@ Session::Session(const string &path) : agents(vector<Agent *>()) {
     int i = 0;
     int j = 0;
     //The matrix of the graph.
-    vector<vector<int>> *matrix = new vector<vector<int>>();
+    vector<vector<int>> matrix = vector<vector<int>>();
     //The line of every loop in the matrix.
-    vector<int> *line = new vector<int>();
+    vector<int> line = vector<int>();
     //Entering the graph data.
     while (file["graph"][i] != nullptr) {
         while (file["graph"][i][j] != nullptr) {
-            line->push_back(file["graph"][i][j]);
+            line.push_back(file["graph"][i][j]);
             j++;
         }
-        matrix->push_back(*line);
-        line->clear();
+        matrix.push_back(line);
+        line.clear();
         i++;
     }
-    this->g = Graph(*matrix);
+    this->g = Graph(matrix);
 
     //========================================================================================================
     //Entering the Agents data.
@@ -90,7 +90,8 @@ Graph Session::getGraph() const {
 
 void Session::simulate() {
     while (!InfectedNodes.empty()) {
-        for (int i = 0; i < agents.size(); i++) {
+        int size = agents.size();
+        for (int i = 0; i < size; i++) {
             agents.at(i)->act();
         }
     }
