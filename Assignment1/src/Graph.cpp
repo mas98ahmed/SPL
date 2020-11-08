@@ -1,14 +1,14 @@
 #include "../Include/Graph.h"
 
-Graph::Graph(vector<vector<int>> matrix): edges(matrix){
+Graph::Graph(vector<vector<int>> matrix) : edges(matrix) {
     InfectedNodes = vector<int>();
 }
 
 Graph::Graph() {}
 
 bool Graph::isInfected(int nodeInd) {
-    for (auto i = InfectedNodes.begin(); i != InfectedNodes.end(); ++i){
-        if(*i == nodeInd){
+    for (int i = 0; i < InfectedNodes.size(); i++) {
+        if (InfectedNodes.at(i) == nodeInd) {
             return true;
         }
     }
@@ -19,6 +19,6 @@ void Graph::infectNode(int nodeInd) {
     InfectedNodes.push_back(nodeInd);
 }
 
-vector<vector<int>> Graph::getEdges() const{
+vector<vector<int>> Graph::getEdges() const {
     return edges;
 }

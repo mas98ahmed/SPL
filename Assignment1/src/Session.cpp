@@ -1,6 +1,5 @@
 #include "../Include/Session.h"
 
-using namespace std;
 
 Session::Session(const string &path) : agents(vector<Agent *>()) {
     //Openning a stream to the file.
@@ -38,14 +37,13 @@ Session::Session(const string &path) : agents(vector<Agent *>()) {
         int nodeId = file["agents"][c][1];
         if (file["agents"][c][0] == "V") {
             a = new Virus(nodeId, *this);
-            enqueueInfected(nodeId);
+            InfectedNodes.push(nodeId);
         } else {
             a = new ContactTracer(*this);
         }
         this->agents.push_back(a);
         c++;
     }
-
     //========================================================================================================
     //Entering the TreeType data.
 
@@ -65,6 +63,7 @@ void Session::addAgent(const Agent &agent) { agent.addAgentVisit(); }
 void Session::addAgent(Agent *agent) {
     Agent *a = agent;
     agents.push_back(a);
+    InfectedNodes.push(agent->getNodeId());
 }
 
 void Session::setGraph(const Graph &graph) { this->g = graph; }
@@ -90,5 +89,9 @@ Graph Session::getGraph() const {
 }
 
 void Session::simulate() {
-
+    while (!InfectedNodes.empty()) {
+        for (int i = 0; i < agents.size(); i++) {
+            agents.at(i)->act();
+        }
+    }
 }

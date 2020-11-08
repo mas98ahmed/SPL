@@ -20,7 +20,7 @@ enum TreeType{
 class Session{
 public:
     Session(const string& path);
-    
+
     void simulate();
     void addAgent(const Agent& agent);
     void addAgent(Agent* agent);
