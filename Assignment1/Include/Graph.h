@@ -13,6 +13,7 @@ public:
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);
     vector<vector<int>> getEdges() const;
+    vector<int> getInfectedNodes() const;
 
 private:
     vector<vector<int>> edges;

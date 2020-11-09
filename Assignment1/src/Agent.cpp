@@ -1,50 +1,56 @@
 #include "../Include/Agent.h"
+#include "../Include/Tree.h"
 
 //Agent
-Agent::Agent(Session &session) : session(session) {}
-
-Session &Agent::getSession() const { return session; }
+Agent::Agent() {}
 
 //===================================================================================
 //ContactTracer
 
-ContactTracer::ContactTracer(Session &session) : Agent(session) {}
+ContactTracer::ContactTracer() : Agent() {}
 
-void ContactTracer::act() {}
-
-ContactTracer::ContactTracer(ContactTracer &other) : Agent(other.getSession()) {}
-
-void ContactTracer::addAgentVisit() { session.addAgent(this); }
-
-int ContactTracer::getNodeId() const {
-    return -1;
+void ContactTracer::act(Session &session) {
+    int nodeId = session.dequeueInfected();
+    if (nodeId == -1) {
+        Tree *tree = Tree::createTree(session, nodeId);
+        int nodeTraced = tree->traceTree();
+        vector<vector<int>> matrix = session.getGraph().getEdges();
+        int neighborsSize = matrix[nodeTraced].size();
+        for (int i = 0; i < neighborsSize; i++) {
+            matrix[nodeTraced][i] = 0;
+            matrix[i][nodeTraced] = 0;
+        }
+        session.setGraph(Graph(matrix));
+    }
 }
+
+ContactTracer::ContactTracer(const ContactTracer &other) : Agent() {}
+
+int ContactTracer::getNodeId() const { return -1; }
+
+Agent *ContactTracer::clone() const { return new ContactTracer(*this); }
 
 //===================================================================================
 //Virus
 
-Virus::Virus(int nodeInd, Session &session) : nodeInd(nodeInd), Agent(session) {}
+Virus::Virus(int nodeInd) : nodeInd(nodeInd), Agent() {}
 
-Virus::Virus(Virus &other) : nodeInd(other.getNode()), Agent(other.getSession()) {}
+Virus::Virus(const Virus &other) : nodeInd(other.getNodeId()), Agent() {}
 
-void Virus::act() {
+void Virus::act(Session &session) {
     session.enqueueInfected(nodeInd);
-    vector<int> neighbors = session.getGraph().getEdges().at(nodeInd);
+    int NeighborsSize = session.getGraph().getEdges()[nodeInd].size();
     bool stop = false;
     int i = 0;
-    while(i < neighbors.size() && !stop) {
+    while (i < NeighborsSize && !stop) {
         if (!session.getGraph().isInfected(i)) {
-            session.addAgent(i);
+            session.addAgent(new Virus(i));
             stop = true;
         }
         i++;
     }
 }
 
-void Virus::addAgentVisit() { session.addAgent(this); }
+int Virus::getNodeId() const { return nodeInd; }
 
-int Virus::getNode() const { return nodeInd; }
-
-int Virus::getNodeId() const {
-    return this->nodeInd;
-}
+Agent *Virus::clone() const { return new Virus(*this); }

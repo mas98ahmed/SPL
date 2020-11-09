@@ -2,7 +2,7 @@
 
 
 Session::Session(const string &path) : g(), treeType(), agents() {
-    //Openning a stream to the file.
+    //Opening a stream to the file.
     ifstream is(path);
     nlohmann::json file;
     is >> file;
@@ -36,10 +36,10 @@ Session::Session(const string &path) : g(), treeType(), agents() {
     while (file["agents"][c] != nullptr) {
         int nodeId = file["agents"][c][1];
         if (file["agents"][c][0] == "V") {
-            a = new Virus(nodeId, *this);
+            a = new Virus(nodeId);
             InfectedNodes.push(nodeId);
         } else {
-            a = new ContactTracer(*this);
+            a = new ContactTracer();
         }
         this->agents.push_back(a);
         c++;
@@ -58,13 +58,7 @@ Session::Session(const string &path) : g(), treeType(), agents() {
     }
 }
 
-void Session::addAgent(const Agent &agent) { agent.addAgentVisit(); }
-
-void Session::addAgent(Agent *agent) {
-    Agent *a = agent;
-    agents.push_back(a);
-    InfectedNodes.push(agent->getNodeId());
-}
+void Session::addAgent(const Agent &agent) { agents.push_back(agent.clone()); }
 
 void Session::setGraph(const Graph &graph) { this->g = graph; }
 
@@ -84,15 +78,20 @@ int Session::dequeueInfected() {
 
 TreeType Session::getTreeType() const { return treeType; }
 
-Graph Session::getGraph() const {
-    return g;
-}
+Graph Session::getGraph() const { return g; }
 
 void Session::simulate() {
     while (!InfectedNodes.empty()) {
         int size = agents.size();
         for (int i = 0; i < size; i++) {
-            agents.at(i)->act();
+            agents.at(i)->act(*this);
         }
     }
+
+    //writing to the file.
+    ofstream os("output.json");
+    nlohmann::json file;
+    file["graph:"] = g.getEdges();
+    file["infected"] = g.getInfectedNodes();
+    os << file;
 }

@@ -8,29 +8,24 @@ class Session;
 
 class Agent {
 public:
-    Agent(Session &session);
+    Agent();
 
-    virtual void act() = 0;
+    virtual Agent *clone() = 0 const;
 
-    virtual void addAgentVisit() = 0 const ;
-
-    Session &getSession() const;
+    virtual void act(Session &session) = 0;
 
     virtual int getNodeId() const = 0;
-
-protected:
-    Session &session;
 };
 
 class ContactTracer : public Agent {
 public:
-    ContactTracer(Session &session);
+    ContactTracer();
 
-    ContactTracer(ContactTracer &other);
+    ContactTracer(const ContactTracer &other);
 
-    virtual void act();
+    virtual Agent *clone() const;
 
-    virtual void addAgentVisit();
+    virtual void act(Session &session);
 
     virtual int getNodeId() const;
 };
@@ -38,15 +33,13 @@ public:
 
 class Virus : public Agent {
 public:
-    Virus(int nodeInd, Session &session);
+    Virus(int nodeInd);
 
-    Virus(Virus &other);
+    Virus(const Virus &other);
 
-    virtual void act();
+    virtual Agent *clone() const;
 
-    int getNode() const;
-
-    virtual void addAgentVisit();
+    virtual void act(Session &session);
 
     virtual int getNodeId() const;
 

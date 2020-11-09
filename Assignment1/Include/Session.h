@@ -23,7 +23,6 @@ public:
 
     void simulate();
     void addAgent(const Agent& agent);
-    void addAgent(Agent* agent);
     void setGraph(const Graph& graph);
     Graph getGraph() const;
     void enqueueInfected(int node);

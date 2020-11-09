@@ -1,8 +1,6 @@
 #include "../Include/Graph.h"
 
-Graph::Graph(vector<vector<int>> matrix) : edges(matrix) {
-    InfectedNodes = vector<int>();
-}
+Graph::Graph(vector<vector<int>> matrix) : edges(matrix) { InfectedNodes = vector<int>(); }
 
 Graph::Graph() {}
 
@@ -15,10 +13,8 @@ bool Graph::isInfected(int nodeInd) {
     return false;
 }
 
-void Graph::infectNode(int nodeInd) {
-    InfectedNodes.push_back(nodeInd);
-}
+void Graph::infectNode(int nodeInd) { InfectedNodes.push_back(nodeInd); }
 
-vector<vector<int>> Graph::getEdges() const {
-    return edges;
-}
+vector<vector<int>> Graph::getEdges() const { return edges; }
+
+vector<int> Graph::getInfectedNodes() const { return InfectedNodes; }
