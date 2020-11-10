@@ -1,11 +1,14 @@
 #ifndef TREE_H_
 #define TREE_H_
 
-#include "../Include/Session.h"
+#include "Session.h"
 
 #include <iostream>
 #include <queue>
 #include <vector>
+
+using namespace std;
+
 
 class Session;
 
@@ -13,25 +16,21 @@ class Tree {
 public:
     Tree(int rootLabel);
 
-    Tree(const Tree &tree);
-
+    //Rule of 3.
+    Tree(const Tree &other);
     virtual Tree *clone() const = 0;
-
-    Tree &operator=(const Tree &tree);
-
+    Tree &operator=(const Tree &other);
+    void clear();
     virtual ~Tree();
 
-    void clear();
-
-    int getNode() const;
-
-    void addChild(const Tree &child);
-
+    //Methods
     static Tree *createTree(const Session &session, int rootLabel);
-
+    void addChild(const Tree &child);
     virtual int traceTree() = 0;
 
+    //getters
     vector<Tree *> getChildren() const;
+    int getNode() const;
 
 protected:
     int node;
@@ -42,14 +41,16 @@ class CycleTree : public Tree {
 public:
     CycleTree(int rootLabel, int currCycle);
 
+    //Rule of 3.
     CycleTree(const CycleTree &other);
-
     virtual Tree *clone() const;
-
     virtual ~CycleTree();
 
+    //Methods
     virtual int traceTree();
 
+    //Getters
+    int getCycle() const;
 private:
     int currCycle;
 };
@@ -58,11 +59,12 @@ class MaxRankTree : public Tree {
 public:
     MaxRankTree(int rootLabel);
 
+    //Rule of 3.
     MaxRankTree(const MaxRankTree &other);
-
-    virtual ~MaxRankTree();
     virtual Tree *clone() const;
+    virtual ~MaxRankTree();
 
+    //Methods
     virtual int traceTree();
 };
 
@@ -70,12 +72,12 @@ class RootTree : public Tree {
 public:
     RootTree(int rootLabel);
 
+    //Rule of 3.
     RootTree(const RootTree &other);
-
     virtual Tree *clone() const;
-
     virtual ~RootTree();
 
+    //Methods
     virtual int traceTree();
 };
 

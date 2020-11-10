@@ -5,17 +5,24 @@ using namespace std;
 
 Tree::Tree(int rootLabel) : node(rootLabel) {};
 
-Tree::Tree(const Tree &tree) {// copy const
-    children = tree.children;
-    node = tree.node;
+//Rule of 3.
+Tree::Tree(const Tree &other) {// copy const
+    node = other.getNode();
+    clear();
+    for(int i=0;i<other.getChildren().size();i++){
+        children.push_back(other.getChildren()[i]->clone());
+    }
 };
 
-Tree &Tree::operator=(const Tree &tree) {//rule of 3
-    if (this == &tree)
-        return *this;
-    clear();
-    children = tree.children;
-    node = tree.node;
+Tree &Tree::operator=(const Tree &other) {//rule of 3
+    if (this != &other) {
+        clear();
+        node = other.node;
+        for(int i=0;i<other.getChildren().size();i++){
+            children.push_back(other.getChildren()[i]->clone());
+        }
+    }
+    return *this;
 };
 
 void Tree::clear() {
@@ -28,12 +35,15 @@ void Tree::clear() {
     }
 };
 
+Tree::~Tree() {}
+
+//Methods
 Tree *Tree::createTree(const Session &session, int rootLabel) {
     TreeType type = session.getTreeType();
     Tree *ans;
     switch (type) {
         case Cycle :
-            ans = new RootTree(rootLabel);
+            ans = new CycleTree(rootLabel, session.getCycle());
             break;
         case MaxRank :
             ans = new MaxRankTree(rootLabel);
@@ -45,24 +55,30 @@ Tree *Tree::createTree(const Session &session, int rootLabel) {
     return ans;
 }
 
+void Tree::addChild(const Tree &child) { children.push_back(child.clone()); }
+
+//Getters
 int Tree::getNode() const { return node; }
 
 vector<Tree *> Tree::getChildren() const { return children; };
-
-void Tree::addChild(const Tree &child) {
-    children.push_back(child.clone());
-}
-
-Tree::~Tree() {
-
-}
 
 //============================================================================================================
 
 CycleTree::CycleTree(int rootLabel, int currCycle) : Tree(rootLabel), currCycle(currCycle) {};
 
-CycleTree::CycleTree(const CycleTree &other) : Tree(other.getNode()) {};
+//Rule of 3.
+CycleTree::CycleTree(const CycleTree &other) : currCycle(other.getCycle()), Tree(other) {};
 
+Tree *CycleTree::clone() const { return new CycleTree(*this); }
+
+CycleTree::~CycleTree() {
+    for(int i=0;i<children.size();i++){
+        delete children[i];
+    }
+    children.clear();
+}
+
+//Methods
 int CycleTree::traceTree() {
     vector<Tree *> curr = children;
     while (currCycle > 0 && curr[0] != nullptr) {
@@ -72,23 +88,31 @@ int CycleTree::traceTree() {
     return curr[0]->getNode();
 }
 
-Tree *CycleTree::clone() const { return new CycleTree(*this); }
-
-CycleTree::~CycleTree() {}
-
-//curr and prev to change code;
+//Getters
+int CycleTree::getCycle() const { return currCycle; }
 
 //============================================================================================================
 
 MaxRankTree::MaxRankTree(int rootLabel) : Tree(rootLabel) {}
 
-MaxRankTree::MaxRankTree(const MaxRankTree &other) : Tree(other.getNode()) {}
+//Rule of 3.
+MaxRankTree::MaxRankTree(const MaxRankTree &other) : Tree(other) {}
 
+Tree *MaxRankTree::clone() const { return new MaxRankTree(*this); }
+
+MaxRankTree::~MaxRankTree() {
+    for(int i=0;i<children.size();i++){
+        delete children[i];
+    }
+    children.clear();
+}
+
+//Methods
 int MaxRankTree::traceTree() {
     int max = 0;
     int nodeId = 0;
     queue<Tree *> q;
-    q.push(this);// ask shahar
+    q.push(this);
     while (!q.empty()) {
         Tree *check = q.front();
         q.pop();
@@ -102,27 +126,25 @@ int MaxRankTree::traceTree() {
 
         }
     }
-    return nodeId; // never reach this line
+    return nodeId;
 }
-
-Tree *MaxRankTree::clone() const { return new MaxRankTree(*this); }
-
-MaxRankTree::~MaxRankTree() {}
 
 //============================================================================================================
 
 RootTree::RootTree(int rootLabel) : Tree(rootLabel) {};
 
-int RootTree::traceTree() {
-    return this->getNode();
+//Rule of 3.
+RootTree::RootTree(const RootTree &other) : Tree(other) {
 }
 
-Tree *RootTree::clone() const {
-    return new RootTree(*this);
-}
+Tree *RootTree::clone() const { return new RootTree(*this); }
 
-RootTree::RootTree(const RootTree &other) : Tree(other.getNode()) {
-}
+RootTree::~RootTree() {
+    for(int i=0;i<children.size();i++){
+        delete children[i];
+    }
+    children.clear();
+};
 
-RootTree::~RootTree() {};
-
+//Methods
+int RootTree::traceTree() { return this->getNode(); }

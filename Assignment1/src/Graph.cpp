@@ -1,9 +1,13 @@
 #include "../Include/Graph.h"
 
+using namespace std;
+
+
 Graph::Graph(vector<vector<int>> matrix) : edges(matrix) { InfectedNodes = vector<int>(); }
 
 Graph::Graph() {}
 
+//Methods
 bool Graph::isInfected(int nodeInd) {
     for (int i = 0; i < InfectedNodes.size(); i++) {
         if (InfectedNodes.at(i) == nodeInd) {
@@ -15,6 +19,46 @@ bool Graph::isInfected(int nodeInd) {
 
 void Graph::infectNode(int nodeInd) { InfectedNodes.push_back(nodeInd); }
 
+Tree *Graph::BFS(const Session &session, int root) {
+    Tree *tree = Tree::createTree(session, root);
+    //BFS...
+    vector<bool> visited;
+    for (int i = 0; i < edges.size(); i++) {
+        visited.push_back(false);
+    }
+    visited[root] = true;
+
+    vector<int> q;
+    vector<Tree*> qTrees;
+
+    q.push_back(root);
+    qTrees.push_back(tree);
+
+    int qNode;
+    Tree* qTree;
+    Tree* newTree;
+    while (!q.empty()) {
+        qNode = q[0];
+        qTree = qTrees[0];
+
+        q.erase(q.begin());
+        qTrees.erase(qTrees.begin());
+
+
+        for (int i = 0; i < edges.size(); i++) {
+            if (edges[qNode][i] == 1 && (!visited[i])) {
+                newTree = Tree::createTree(session,i);
+                qTree->addChild(*newTree);
+                q.push_back(i);
+                qTrees.push_back(newTree);
+                visited[i] = true;
+            }
+        }
+    }
+    return tree;
+}
+
+//Getters
 vector<vector<int>> Graph::getEdges() const { return edges; }
 
 vector<int> Graph::getInfectedNodes() const { return InfectedNodes; }

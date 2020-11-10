@@ -1,5 +1,6 @@
 #include "../Include/Agent.h"
-#include "../Include/Tree.h"
+
+using namespace std;
 
 //Agent
 Agent::Agent() {}
@@ -12,7 +13,7 @@ ContactTracer::ContactTracer() : Agent() {}
 void ContactTracer::act(Session &session) {
     int nodeId = session.dequeueInfected();
     if (nodeId == -1) {
-        Tree *tree = Tree::createTree(session, nodeId);
+        Tree *tree = session.getGraph().BFS(session,nodeId);
         int nodeTraced = tree->traceTree();
         vector<vector<int>> matrix = session.getGraph().getEdges();
         int neighborsSize = matrix[nodeTraced].size();

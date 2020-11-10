@@ -1,7 +1,8 @@
 #include "../Include/Session.h"
 
+using namespace std;
 
-Session::Session(const string &path) : g(), treeType(), agents() {
+Session::Session(const string &path) : g(), treeType(), agents(), cycle(0) {
     //Opening a stream to the file.
     ifstream is(path);
     nlohmann::json file;
@@ -86,7 +87,9 @@ void Session::simulate() {
         for (int i = 0; i < size; i++) {
             agents.at(i)->act(*this);
         }
+        cycle++;
     }
+    cycle = 0;
 
     //writing to the file.
     ofstream os("output.json");
@@ -95,3 +98,5 @@ void Session::simulate() {
     file["infected"] = g.getInfectedNodes();
     os << file;
 }
+
+int Session::getCycle() const { return cycle; }

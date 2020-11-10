@@ -1,8 +1,11 @@
 #ifndef AGENT_H_
 #define AGENT_H_
 
-#include <vector>
 #include "Session.h"
+#include <vector>
+
+using namespace std;
+
 
 class Session;
 
@@ -10,7 +13,7 @@ class Agent {
 public:
     Agent();
 
-    virtual Agent *clone() = 0 const;
+    virtual Agent *clone() const = 0;
 
     virtual void act(Session &session) = 0;
 
