@@ -23,9 +23,10 @@ bin/Graph.o: src/Graph.cpp
 	g++ -g -Wall -Weffc++ -std=c++11 -c -IInclude -o bin/Graph.o src/Graph.cpp
 
 
-#Clean the build directory
+# Clean the build directory
 clean: 
 	rm -f bin/*
-	
+
+# Running the valgrind
 do: 
-	valgrind --leak-check=yes ./bin/test
+	valgrind --leak-check=yes ./bin/run

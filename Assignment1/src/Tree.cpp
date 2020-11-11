@@ -115,22 +115,21 @@ MaxRankTree::~MaxRankTree() {
 //Methods
 int MaxRankTree::traceTree() {
     int max = 0;
-    int nodeId = 0;
+    int nodeId = node;
     queue<Tree *> q;
     q.push(this);
     while (!q.empty()) {
         Tree *check = q.front();
-        q.pop();
         int ChildrenSize = check->getChildren().size();
         if (ChildrenSize > max) {
-            max = check->getChildren().size();
+            max = ChildrenSize;
             nodeId = check->getNode();
         } else {
-            int ChildrenSize =  q.front()->getChildren().size();
+            int ChildrenSize =  check->getChildren().size();
             for (int i = 0; i < ChildrenSize; i++) {
                 q.push(check->getChildren()[i]);
             }
-
+            q.pop();
         }
     }
     return nodeId;
