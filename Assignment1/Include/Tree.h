@@ -1,11 +1,10 @@
 #ifndef TREE_H_
 #define TREE_H_
 
-#include "Session.h"
-
 #include <iostream>
 #include <queue>
 #include <vector>
+#include "Session.h"
 
 using namespace std;
 

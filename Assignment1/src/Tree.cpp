@@ -1,5 +1,5 @@
 #include "../Include/Tree.h"
-
+#include "../Include/Session.h"
 
 using namespace std;
 

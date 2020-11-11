@@ -1,7 +1,6 @@
 #ifndef AGENT_H_
 #define AGENT_H_
 
-#include "Session.h"
 #include <vector>
 
 using namespace std;
@@ -14,6 +13,8 @@ public:
     Agent();
 
     virtual Agent *clone() const = 0;
+    
+    virtual ~Agent();
 
     virtual void act(Session &session) = 0;
 
@@ -27,7 +28,7 @@ public:
     ContactTracer(const ContactTracer &other);
 
     virtual Agent *clone() const;
-
+    
     virtual void act(Session &session);
 
     virtual int getNodeId() const;
@@ -41,7 +42,7 @@ public:
     Virus(const Virus &other);
 
     virtual Agent *clone() const;
-
+    
     virtual void act(Session &session);
 
     virtual int getNodeId() const;

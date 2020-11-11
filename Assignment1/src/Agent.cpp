@@ -1,9 +1,13 @@
 #include "../Include/Agent.h"
+#include "../Include/Session.h"
+#include "../Include/Tree.h"
 
 using namespace std;
 
 //Agent
 Agent::Agent() {}
+
+Agent::~Agent(){}
 
 //===================================================================================
 //ContactTracer
@@ -25,7 +29,7 @@ void ContactTracer::act(Session &session) {
     }
 }
 
-ContactTracer::ContactTracer(const ContactTracer &other) : Agent() {}
+ContactTracer::ContactTracer(const ContactTracer &other){}
 
 int ContactTracer::getNodeId() const { return -1; }
 
@@ -34,9 +38,9 @@ Agent *ContactTracer::clone() const { return new ContactTracer(*this); }
 //===================================================================================
 //Virus
 
-Virus::Virus(int nodeInd) : nodeInd(nodeInd), Agent() {}
+Virus::Virus(int nodeInd) : nodeInd(nodeInd){}
 
-Virus::Virus(const Virus &other) : nodeInd(other.getNodeId()), Agent() {}
+Virus::Virus(const Virus &other) : nodeInd(other.getNodeId()){}
 
 void Virus::act(Session &session) {
     session.enqueueInfected(nodeInd);
@@ -45,7 +49,7 @@ void Virus::act(Session &session) {
     int i = 0;
     while (i < NeighborsSize && !stop) {
         if (!session.getGraph().isInfected(i)) {
-            session.addAgent(new Virus(i));
+            session.addAgent(*(new Virus(i)));
             stop = true;
         }
         i++;

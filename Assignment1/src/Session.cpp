@@ -1,8 +1,12 @@
 #include "../Include/Session.h"
+#include "../Include/Graph.h"
+#include "../Include/json.hpp"
+#include "../Include/Agent.h"
+
 
 using namespace std;
 
-Session::Session(const string &path) : g(), treeType(), agents(), cycle(0) {
+Session::Session(const string &path) : g(Graph()), treeType(), agents(), cycle(0) {
     //Opening a stream to the file.
     ifstream is(path);
     nlohmann::json file;

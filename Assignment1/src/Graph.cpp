@@ -1,15 +1,18 @@
 #include "../Include/Graph.h"
+#include "../Include/Tree.h"
+#include "../Include/Session.h"
 
 using namespace std;
 
 
-Graph::Graph(vector<vector<int>> matrix) : edges(matrix) { InfectedNodes = vector<int>(); }
+Graph::Graph(vector<vector<int>> matrix) : edges(matrix), InfectedNodes(vector<int>()){}
 
-Graph::Graph() {}
+Graph::Graph() : edges(vector<vector<int>>()), InfectedNodes(vector<int>()){}
 
 //Methods
 bool Graph::isInfected(int nodeInd) {
-    for (int i = 0; i < InfectedNodes.size(); i++) {
+    int size = InfectedNodes.size();
+    for (int i = 0; i < size; i++) {
         if (InfectedNodes.at(i) == nodeInd) {
             return true;
         }
@@ -23,7 +26,8 @@ Tree *Graph::BFS(const Session &session, int root) {
     Tree *tree = Tree::createTree(session, root);
     //BFS...
     vector<bool> visited;
-    for (int i = 0; i < edges.size(); i++) {
+    int size = edges.size();
+    for (int i = 0; i < size; i++) {
         visited.push_back(false);
     }
     visited[root] = true;
@@ -37,6 +41,7 @@ Tree *Graph::BFS(const Session &session, int root) {
     int qNode;
     Tree* qTree;
     Tree* newTree;
+    int vertexNum = edges.size();
     while (!q.empty()) {
         qNode = q[0];
         qTree = qTrees[0];
@@ -45,7 +50,7 @@ Tree *Graph::BFS(const Session &session, int root) {
         qTrees.erase(qTrees.begin());
 
 
-        for (int i = 0; i < edges.size(); i++) {
+        for (int i = 0; i < vertexNum; i++) {
             if (edges[qNode][i] == 1 && (!visited[i])) {
                 newTree = Tree::createTree(session,i);
                 qTree->addChild(*newTree);

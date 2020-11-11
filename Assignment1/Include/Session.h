@@ -1,10 +1,7 @@
 #ifndef SESSION_H_
 #define SESSION_H_
 
-
 #include "Graph.h"
-#include "json.hpp"
-#include "Agent.h"
 
 #include <vector>
 #include <string>
@@ -13,8 +10,9 @@
 
 using namespace std;
 
-class Graph;
+
 class Agent;
+class Graph;
 
 enum TreeType{
   Cycle,
