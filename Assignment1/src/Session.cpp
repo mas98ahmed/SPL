@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Session::Session(const string &path) : g(Graph()), treeType(), agents(), cycle(0) {
+Session::Session(const string &path) : g(Graph()), treeType(Root), agents(vector<Agent*>()), InfectedNodes(queue<int>()), cycle(0) {
     //Opening a stream to the file.
     ifstream is(path);
     nlohmann::json file;
@@ -96,10 +96,10 @@ void Session::simulate() {
     cycle = 0;
 
     //writing to the file.
-    ofstream os("output.json");
     nlohmann::json file;
     file["graph:"] = g.getEdges();
     file["infected"] = g.getInfectedNodes();
+    ofstream os("output.json");
     os << file;
 }
 

@@ -1,8 +1,8 @@
-	# Tool invocations
+# Tool invocations
 run: bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
 	@echo 'Invoking: C++ Linker'
-	g++ -o bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
-	@echo 'Finished building target: Proj'
+	g++ -o bin/run bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
+	@echo 'Finished building target: Success'
 	@echo ' '
 
 # Depends on the source and header files 
