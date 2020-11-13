@@ -17,6 +17,8 @@ public:
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);
     Tree *BFS(const Session &session, int root);
+    bool isTetminated(const Session &session);
+    void setInfectedNodes(vector<int> InfectedNodes);
 
     //Getters
     vector<vector<int>> getEdges() const;

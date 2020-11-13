@@ -30,6 +30,7 @@ public:
     void setGraph(const Graph& graph);
     void enqueueInfected(int node);
     int dequeueInfected();
+    bool isenqueued(int nodeId) const;
 
     //Getters
     TreeType getTreeType() const;
@@ -37,10 +38,13 @@ public:
     int getCycle() const;
     
 private:
+    bool VirusExist() const;
+
     Graph g;
     TreeType treeType;
     vector<Agent*> agents;
     queue<int> InfectedNodes;
+    vector<int> enqueuedNodes;
     int cycle;
 };
 

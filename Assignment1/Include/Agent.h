@@ -19,6 +19,8 @@ public:
     virtual void act(Session &session) = 0;
 
     virtual int getNodeId() const = 0;
+
+    virtual bool isVirus() const = 0;
 };
 
 class ContactTracer : public Agent {
@@ -32,6 +34,8 @@ public:
     virtual void act(Session &session);
 
     virtual int getNodeId() const;
+
+    virtual bool isVirus() const;
 };
 
 
@@ -46,6 +50,8 @@ public:
     virtual void act(Session &session);
 
     virtual int getNodeId() const;
+
+    virtual bool isVirus() const;
 
 private:
     const int nodeInd;

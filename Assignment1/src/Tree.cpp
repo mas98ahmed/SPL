@@ -124,8 +124,7 @@ int MaxRankTree::traceTree() {
         if (ChildrenSize > max) {
             max = ChildrenSize;
             nodeId = check->getNode();
-        } else {
-            int ChildrenSize =  check->getChildren().size();
+        }else{
             for (int i = 0; i < ChildrenSize; i++) {
                 q.push(check->getChildren()[i]);
             }

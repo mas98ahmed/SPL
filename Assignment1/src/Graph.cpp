@@ -2,6 +2,8 @@
 #include "../Include/Tree.h"
 #include "../Include/Session.h"
 
+
+#include <iostream>
 using namespace std;
 
 
@@ -31,38 +33,52 @@ Tree *Graph::BFS(const Session &session, int root) {
         visited.push_back(false);
     }
     visited[root] = true;
-
-    vector<int> q;
-    vector<Tree*> qTrees;
-
-    q.push_back(root);
-    qTrees.push_back(tree);
-
-    int qNode;
+    //=============
+    queue<Tree*> qTrees;
+    //=============
+    qTrees.push(tree);
+    //=============
     Tree* qTree;
-    Tree* newTree;
+    //=============
     int vertexNum = edges.size();
-    while (!q.empty()) {
-        qNode = q[0];
-        qTree = qTrees[0];
-
-        q.erase(q.begin());
-        qTrees.erase(qTrees.begin());
-
-
+    //=============
+    cout<<"Starting BFS"<<endl;
+    while (!qTrees.empty()) {
+        int qNode = qTrees.front()->getNode();
+        qTree = qTrees.front();
+        //======================
+        qTrees.pop();
+        //======================
+        cout<<qNode<<" root "<<endl;
         for (int i = 0; i < vertexNum; i++) {
             if (edges[qNode][i] == 1 && (!visited[i])) {
-                newTree = Tree::createTree(session,i);
+                Tree* newTree = Tree::createTree(session,i);
+                cout<<i<<" : "<<endl;
                 qTree->addChild(*newTree);
-                q.push_back(i);
-                qTrees.push_back(newTree);
+                qTrees.push(qTree->getChildren().back());
                 visited[i] = true;
             }
         }
     }
+    cout<<"Finish BFS"<<endl;
     return tree;
 }
 
+bool Graph::isTetminated(const Session &session){
+    int size = edges.size();
+    for(int node : InfectedNodes){
+        for(int i = 0; i < size; i++){
+            if(edges[node][i] == 1 && !session.isenqueued(i)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void Graph::setInfectedNodes(vector<int> InfectedNodes){
+    this->InfectedNodes = InfectedNodes;
+}
 //Getters
 vector<vector<int>> Graph::getEdges() const { return edges; }
 
