@@ -1,5 +1,6 @@
 #include "../Include/Tree.h"
 #include "../Include/Session.h"
+#include <iostream>
 
 using namespace std;
 
@@ -84,12 +85,12 @@ CycleTree::~CycleTree() {
 
 //Methods
 int CycleTree::traceTree() {
-    vector<Tree *> curr = children;
-    while (currCycle > 0 && curr[0] != nullptr) {
-        curr = curr[0]->getChildren();
+    Tree *curr = this;
+    while (currCycle > 0 && curr->getChildren().size() > 0) {
+        curr = curr->getChildren()[0];
         currCycle--;
     }
-    return curr[0]->getNode();
+    return curr->getNode();
 }
 
 //Getters

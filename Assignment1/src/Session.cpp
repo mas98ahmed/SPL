@@ -78,13 +78,12 @@ void Session::setGraph(const Graph &graph) { this->g = graph; }
 void Session::enqueueInfected(int node) { 
     InfectedNodes.push(node);
     enqueuedNodes.push_back(node);
-cout<<"InfectedNodes Size of session in enqueue: "<<InfectedNodes.size()<<endl; }
+}
 
 int Session::dequeueInfected() {
     if (!InfectedNodes.empty()) {
         int node = InfectedNodes.front();
         InfectedNodes.pop();
-        cout<<"InfectedNodes Size of session in dequeue: "<<InfectedNodes.size()<<endl;
         return node;
     }
     return -1;
@@ -109,7 +108,6 @@ void Session::simulate(){
         while (!g.isTetminated(*this))
         {
             int size = agents.size();
-            cout << "Agents size: " << size << endl;
             for (int i = 0; i < size; i++)
             {
                 agents.at(i)->act(*this);

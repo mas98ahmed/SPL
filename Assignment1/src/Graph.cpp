@@ -42,25 +42,21 @@ Tree *Graph::BFS(const Session &session, int root) {
     //=============
     int vertexNum = edges.size();
     //=============
-    cout<<"Starting BFS"<<endl;
     while (!qTrees.empty()) {
         int qNode = qTrees.front()->getNode();
         qTree = qTrees.front();
         //======================
         qTrees.pop();
         //======================
-        cout<<qNode<<" root "<<endl;
         for (int i = 0; i < vertexNum; i++) {
             if (edges[qNode][i] == 1 && (!visited[i])) {
                 Tree* newTree = Tree::createTree(session,i);
-                cout<<i<<" : "<<endl;
                 qTree->addChild(*newTree);
                 qTrees.push(qTree->getChildren().back());
                 visited[i] = true;
             }
         }
     }
-    cout<<"Finish BFS"<<endl;
     return tree;
 }
 
