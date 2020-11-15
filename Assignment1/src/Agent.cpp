@@ -9,12 +9,32 @@ using namespace std;
 //Agent
 Agent::Agent() {}
 
+Agent::Agent(const Agent& other) {}
+
+Agent& Agent::operator=(const Agent& other){}
+
+Agent::Agent(const Agent&& other) {}
+
+Agent& Agent::operator=(const Agent&& other){}
+
 Agent::~Agent(){}
 
 //===================================================================================
 //ContactTracer
 
 ContactTracer::ContactTracer() : Agent() {}
+
+ContactTracer::ContactTracer(const ContactTracer& other) {}
+
+ContactTracer& ContactTracer::operator=(const ContactTracer& other){}
+
+ContactTracer::ContactTracer(const ContactTracer&& other) {}
+
+ContactTracer& ContactTracer::operator=(const ContactTracer&& other){}
+
+ContactTracer::~ContactTracer(){}
+
+Agent *ContactTracer::clone() const { return new ContactTracer(*this); }
 
 void ContactTracer::act(Session &session) {
     int nodeId = session.dequeueInfected();
@@ -33,11 +53,7 @@ void ContactTracer::act(Session &session) {
     }
 }
 
-ContactTracer::ContactTracer(const ContactTracer &other){}
-
 int ContactTracer::getNodeId() const { return -1; }
-
-Agent *ContactTracer::clone() const { return new ContactTracer(*this); }
 
 bool ContactTracer::isVirus() const{ return false;}
 
@@ -47,6 +63,14 @@ bool ContactTracer::isVirus() const{ return false;}
 Virus::Virus(int nodeInd) : nodeInd(nodeInd){}
 
 Virus::Virus(const Virus &other) : nodeInd(other.getNodeId()){}
+
+Virus& Virus::operator=(const Virus& other){ nodeInd = other.nodeInd; }
+
+Virus::Virus(const Virus &&other) : nodeInd(other.getNodeId()){}
+
+Virus& Virus::operator=(const Virus&& other){ nodeInd = other.nodeInd;}
+
+Agent *Virus::clone() const { return new Virus(*this); }
 
 void Virus::act(Session &session) {
     if(!session.isenqueued(nodeInd)){
@@ -64,7 +88,5 @@ void Virus::act(Session &session) {
 }
 
 int Virus::getNodeId() const { return nodeInd; }
-
-Agent *Virus::clone() const { return new Virus(*this); }
 
 bool Virus::isVirus() const{ return true;}

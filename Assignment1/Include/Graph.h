@@ -13,6 +13,14 @@ public:
     Graph(vector<vector<int>> matrix);
     Graph();
 
+    //Rule of 5.
+    Graph(const Graph &other);//copy ctr
+    Graph &operator=(const Graph &other);//copy assign
+    Graph(const Graph &&other);//move ctr
+    Graph &operator=(const Graph &&other);//move assign
+    ~Graph();//destructor
+    void clear();
+    
     //Methods
     void infectNode(int nodeInd);
     bool isInfected(int nodeInd);

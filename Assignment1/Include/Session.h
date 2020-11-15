@@ -24,6 +24,14 @@ class Session{
 public:
     Session(const string& path);
 
+    //Rule of 5.
+    Session(const Session &other);//copy ctr
+    Session &operator=(const Session &other);//copy assign    
+    Session(const Session &&other);//move ctr
+    Session &operator=(const Session &&other);//move assign
+    ~Session();//destructor
+    void clear();
+
     //Methods
     void simulate();
     void addAgent(const Agent& agent);

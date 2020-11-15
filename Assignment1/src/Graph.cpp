@@ -11,7 +11,125 @@ Graph::Graph(vector<vector<int>> matrix) : edges(matrix), InfectedNodes(vector<i
 
 Graph::Graph() : edges(vector<vector<int>>()), InfectedNodes(vector<int>()){}
 
-//Methods
+Graph::Graph(const Graph &other){
+    if (this != &other)
+    {
+        clear();
+        int size = edges.size();
+        vector<int> line = vector<int>();
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                line.push_back(other.edges[i][j]);
+            }
+            edges.push_back(line);
+            line = vector<int>();
+        }
+        size = InfectedNodes.size();
+        for (int i = 0; i < size; i++)
+        {
+            InfectedNodes.push_back(other.InfectedNodes[i]);
+        }
+    }
+}
+
+Graph& Graph::operator=(const Graph &other){
+    if (this != &other)
+    {
+        clear();
+        int size = edges.size();
+        vector<int> line = vector<int>();
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                line.push_back(other.edges[i][j]);
+            }
+            edges.push_back(line);
+            line = vector<int>();
+        }
+        size = InfectedNodes.size();
+        for (int i = 0; i < size; i++)
+        {
+            InfectedNodes.push_back(other.InfectedNodes[i]);
+        }
+    }
+    return *this;
+}
+
+Graph::Graph(const Graph &&other){
+    if (this != &other)
+    {
+        clear();
+        int size = edges.size();
+        vector<int> line = vector<int>();
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                line.push_back(other.edges[i][j]);
+            }
+            edges.push_back(line);
+            line = vector<int>();
+        }
+        size = InfectedNodes.size();
+        for (int i = 0; i < size; i++)
+        {
+            InfectedNodes.push_back(other.InfectedNodes[i]);
+        }
+        size = other.edges.size();
+        for (int i = 0; i < size; i++)
+        {
+            other.getEdges()[i].clear();
+        }
+        other.getEdges().clear();
+        other.getInfectedNodes().clear();
+    }
+}
+
+Graph& Graph::operator=(const Graph &&other){
+    if (this != &other)
+    {
+        clear();
+        int size = edges.size();
+        vector<int> line = vector<int>();
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                line.push_back(other.edges[i][j]);
+            }
+            edges.push_back(line);
+            line = vector<int>();
+        }
+        size = InfectedNodes.size();
+        for (int i = 0; i < size; i++)
+        {
+            InfectedNodes.push_back(other.InfectedNodes[i]);
+        }
+        size = other.edges.size();
+        for (int i = 0; i < size; i++)
+        {
+            other.getEdges()[i].clear();
+        }
+        other.getEdges().clear();
+        other.getInfectedNodes().clear();
+    }
+    return *this;
+}
+
+Graph::~Graph(){ clear(); }
+
+void Graph::clear(){
+    int size = edges.size();
+    for(int i = 0; i < size; i++){
+        edges[i].clear();
+    }
+    edges.clear();
+    InfectedNodes.clear();
+}
+
 bool Graph::isInfected(int nodeInd) {
     int size = InfectedNodes.size();
     for (int i = 0; i < size; i++) {
@@ -75,7 +193,7 @@ bool Graph::isTetminated(const Session &session){
 void Graph::setInfectedNodes(vector<int> InfectedNodes){
     this->InfectedNodes = InfectedNodes;
 }
-//Getters
+
 vector<vector<int>> Graph::getEdges() const { return edges; }
 
 vector<int> Graph::getInfectedNodes() const { return InfectedNodes; }
