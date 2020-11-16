@@ -12,12 +12,7 @@ class Graph {
 public:
     Graph(vector<vector<int>> matrix);
     Graph();
-
-    //Rule of 5.
-    Graph(const Graph &other);//copy ctr
-    Graph &operator=(const Graph &other);//copy assign
-    Graph(const Graph &&other);//move ctr
-    Graph &operator=(const Graph &&other);//move assign
+    
     ~Graph();//destructor
     void clear();
     

@@ -18,8 +18,8 @@ public:
     //Rule of 5.
     Tree(const Tree &other);//copy ctr
     Tree &operator=(const Tree &other);//copy assign 
-    Tree(const Tree &&other);//move ctr
-    Tree &operator=(const Tree &&other);//move assign
+    Tree(Tree &&other);//move ctr
+    Tree &operator=(Tree &&other);//move assign
     virtual ~Tree();//destrustor
     virtual Tree *clone() const = 0;
     void clear();
@@ -45,8 +45,8 @@ public:
     //Rule of 5.
     CycleTree(const CycleTree &other);//copy ctr
     CycleTree &operator=(const CycleTree &other);//copy assign
-    CycleTree(const CycleTree &&other);//move ctr
-    CycleTree &operator=(const CycleTree &&other);//move assign
+    CycleTree(CycleTree &&other);//move ctr
+    CycleTree &operator=(CycleTree &&other);//move assign
     virtual ~CycleTree();
     virtual Tree *clone() const;
 
@@ -66,8 +66,8 @@ public:
     //Rule of 5.
     MaxRankTree(const MaxRankTree &other);//copy ctr
     MaxRankTree &operator=(const MaxRankTree &other);//copy assign
-    MaxRankTree(const MaxRankTree &&other);//move ctr
-    MaxRankTree &operator=(const MaxRankTree &&other);//move assign
+    MaxRankTree(MaxRankTree &&other);//move ctr
+    MaxRankTree &operator=(MaxRankTree &&other);//move assign
     virtual ~MaxRankTree();//destructor
     virtual Tree *clone() const;
 
@@ -82,8 +82,8 @@ public:
     //Rule of 5.
     RootTree(const RootTree &other);//copy ctr
     RootTree &operator=(const RootTree &other);//copy assign
-    RootTree(const RootTree &&other);//move ctr
-    RootTree &operator=(const RootTree &&other);//move assign
+    RootTree(RootTree &&other);//move ctr
+    RootTree &operator=(RootTree &&other);//move assign
     virtual ~RootTree();//destructor
     virtual Tree *clone() const;
 
