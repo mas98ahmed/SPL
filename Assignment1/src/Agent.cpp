@@ -9,28 +9,14 @@ using namespace std;
 //Agent
 Agent::Agent() {}
 
-Agent::Agent(const Agent& other) {}
-
-Agent& Agent::operator=(const Agent& other){}
-
-Agent::Agent(const Agent&& other) {}
-
-Agent& Agent::operator=(const Agent&& other){}
-
-Agent::~Agent(){}
+Agent::~Agent(){};
 
 //===================================================================================
 //ContactTracer
 
-ContactTracer::ContactTracer() : Agent() {}
+ContactTracer::ContactTracer() {}
 
 ContactTracer::ContactTracer(const ContactTracer& other) {}
-
-ContactTracer& ContactTracer::operator=(const ContactTracer& other){}
-
-ContactTracer::ContactTracer(const ContactTracer&& other) {}
-
-ContactTracer& ContactTracer::operator=(const ContactTracer&& other){}
 
 ContactTracer::~ContactTracer(){}
 
@@ -62,13 +48,9 @@ bool ContactTracer::isVirus() const{ return false;}
 
 Virus::Virus(int nodeInd) : nodeInd(nodeInd){}
 
-Virus::Virus(const Virus &other) : nodeInd(other.getNodeId()){}
+Virus::Virus(const Virus &other) : nodeInd(other.nodeInd){}
 
-Virus& Virus::operator=(const Virus& other){ nodeInd = other.nodeInd; }
-
-Virus::Virus(const Virus &&other) : nodeInd(other.getNodeId()){}
-
-Virus& Virus::operator=(const Virus&& other){ nodeInd = other.nodeInd;}
+Virus::~Virus(){}
 
 Agent *Virus::clone() const { return new Virus(*this); }
 

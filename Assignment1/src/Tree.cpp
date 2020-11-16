@@ -27,32 +27,21 @@ Tree &Tree::operator=(const Tree &other) {
     return *this;
 };
 
-Tree::Tree(const Tree &other): node(other.getNode()), children(vector<Tree*>()) {
+Tree::Tree(Tree &&other): node(other.node), children(vector<Tree*>()) {
     clear();
-    int childrenSize = other.getChildren().size();
-    for(int i=0;i< childrenSize;i++){
-        children.push_back(other.getChildren()[i]->clone());
-    }
+    children = other.children;
+    other.children = vector<Tree*>();
+    other.node = -1;
 }
 
-Tree &Tree::operator=(const Tree &&other) {
+Tree &Tree::operator=(Tree &&other) {
     if (this != &other)
     {
         clear();
         node = other.node;
-        int childrenSize = other.getChildren().size();
-        for (int i = 0; i < childrenSize; i++)
-        {
-            children.push_back(other.getChildren()[i]);
-        }
-        childrenSize = other.children.size();
-        
-        for (int i = 0; i < childrenSize; i++)
-        {
-            other.children[i]->clear();
-            delete other.children[i];
-        }
-        other.children.clear();
+        children = other.children;
+        other.children = vector<Tree*>();
+        other.node = -1;
     }
     return *this;
 }
@@ -104,6 +93,27 @@ CycleTree::CycleTree(int rootLabel, int currCycle) : Tree(rootLabel), currCycle(
 
 CycleTree::CycleTree(const CycleTree &other) : Tree(other), currCycle(other.getCycle()) {}
 
+CycleTree& CycleTree::operator=(const CycleTree &other){
+    Tree::operator=(other);
+    currCycle = other.currCycle;
+    return *this;
+}
+
+CycleTree::CycleTree(CycleTree &&other) : Tree(other), currCycle(other.getCycle()) {
+    if(this != &other){
+        other.currCycle = -1;
+    }
+}
+
+CycleTree& CycleTree::operator=(CycleTree &&other){
+    if(this != &other){
+        Tree::operator=(other);
+        currCycle = other.currCycle;
+        other.currCycle = -1;
+    }
+    return *this;
+}
+
 Tree *CycleTree::clone() const { return new CycleTree(*this); }
 
 CycleTree::~CycleTree() {}
@@ -124,6 +134,22 @@ int CycleTree::getCycle() const { return currCycle; }
 MaxRankTree::MaxRankTree(int rootLabel) : Tree(rootLabel) {}
 
 MaxRankTree::MaxRankTree(const MaxRankTree &other) : Tree(other) {}
+
+MaxRankTree& MaxRankTree::operator=(const MaxRankTree &other){
+    if(this != &other){
+        Tree::operator=(other);
+    }
+    return *this;
+}
+
+MaxRankTree::MaxRankTree(MaxRankTree &&other) : Tree(other) {}
+
+MaxRankTree& MaxRankTree::operator=(MaxRankTree &&other){
+    if(this != &other){
+        Tree::operator=(other);
+    }
+    return *this;
+}
 
 Tree *MaxRankTree::clone() const { return new MaxRankTree(*this); }
 
@@ -155,6 +181,25 @@ int MaxRankTree::traceTree() {
 RootTree::RootTree(int rootLabel) : Tree(rootLabel) {};
 
 RootTree::RootTree(const RootTree &other) : Tree(other) {}
+
+RootTree& RootTree::operator=(const RootTree &other){
+    if(this != &other){
+        Tree::operator=(other);
+        node = other.node;
+    }
+    return *this;
+}
+
+RootTree::RootTree(RootTree &&other) : Tree(other){}
+
+RootTree& RootTree::operator=(RootTree &&other){
+    if(this != &other){
+        Tree::operator=(other);
+        node = other.node;
+        other.node = -1;
+    }
+    return *this;
+}
 
 Tree *RootTree::clone() const { return new RootTree(*this); }
 

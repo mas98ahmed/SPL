@@ -79,7 +79,7 @@ Session::Session(const string &path) : g(Graph()), treeType(Root), agents(vector
     }
 }
 
-Session::Session(const Session &other) : g(other.g), treeType(other.treeType), cycle(other.cycle)
+Session::Session(const Session &other) : g(other.g), treeType(other.treeType), agents(vector<Agent*>()), InfectedNodes(queue<int>()), enqueuedNodes(vector<int>()), cycle(other.cycle)
 {
     if (this != &other)
     {
@@ -135,68 +135,35 @@ Session &Session::operator=(const Session &other)
     return *this;
 }
 
-Session::Session(const Session &&other) : g(other.g), treeType(other.treeType), cycle(other.cycle)
+Session::Session(Session &&other) : g(other.g), treeType(other.treeType), agents(other.agents), InfectedNodes(other.InfectedNodes), enqueuedNodes(other.enqueuedNodes), cycle(other.cycle)
 {
     if (this != &other)
     {
-        clear();
-        int size = other.InfectedNodes.size();
-        queue<int> Infect = other.InfectedNodes;
-        for (int i = 0; i < size; i++)
-        {
-            int tmp = Infect.front();
-            Infect.pop();
-            InfectedNodes.push(tmp);
-        }
-        size = other.enqueuedNodes.size();
-        for (int i = 0; i < size; i++)
-        {
-            enqueuedNodes.push_back(other.enqueuedNodes[i]);
-        }
-        size = other.agents.size();
-        for (int i = 0; i < size; i++)
-        {
-            agents.push_back(other.agents[i]->clone());
-        }
-        //=================================================
-        for (int i = 0; i < size; i++)
-        {
-            delete other.agents[i];
-        }
+        other.g = Graph();
+        treeType = Root;
+        other.cycle = -1;
+        other.agents = vector<Agent*>();
+        other.InfectedNodes = queue<int>();
+        other.enqueuedNodes = vector<int>();
     }
 }
 
-Session &Session::operator=(const Session &&other)
+Session &Session::operator=(Session &&other)
 {
     if (this != &other)
     {
-        clear();
         g = other.g;
         treeType = other.treeType;
         cycle = other.cycle;
-        int size = other.InfectedNodes.size();
-        queue<int> Infect = other.InfectedNodes;
-        for (int i = 0; i < size; i++)
-        {
-            int tmp = Infect.front();
-            Infect.pop();
-            InfectedNodes.push(tmp);
-        }
-        size = other.enqueuedNodes.size();
-        for (int i = 0; i < size; i++)
-        {
-            enqueuedNodes.push_back(other.enqueuedNodes[i]);
-        }
-        size = other.agents.size();
-        for (int i = 0; i < size; i++)
-        {
-            agents.push_back(other.agents[i]->clone());
-        }
-        //=================================================
-        for (int i = 0; i < size; i++)
-        {
-            delete other.agents[i];
-        }
+        agents = other.agents;
+        InfectedNodes = other.InfectedNodes;
+        enqueuedNodes = other.enqueuedNodes;
+        other.g = Graph();
+        other.treeType = Root;
+        other.cycle = -1;
+        other.agents = vector<Agent*>();
+        other.InfectedNodes = queue<int>();
+        other.enqueuedNodes = vector<int>();
     }
     return *this;
 }
