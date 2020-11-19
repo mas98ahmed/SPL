@@ -64,6 +64,7 @@ Tree *Graph::BFS(const Session &session, int root) {
                 qTree->addChild(*newTree);
                 qTrees.push(qTree->getChildren().back());
                 visited[i] = true;
+                delete newTree;
             }
         }
     }

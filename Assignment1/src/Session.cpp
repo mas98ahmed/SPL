@@ -56,6 +56,7 @@ Session::Session(const string &path) : g(Graph()), treeType(Root), agents(vector
             a = new ContactTracer();
         }
         addAgent(*a);
+        delete a;
         c++;
     }
 
@@ -140,7 +141,7 @@ Session::Session(Session &&other) : g(other.g), treeType(other.treeType), agents
     if (this != &other)
     {
         other.g = Graph();
-        treeType = Root;
+        other.treeType = Root;
         other.cycle = -1;
         other.agents = vector<Agent*>();
         other.InfectedNodes = queue<int>();

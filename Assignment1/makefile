@@ -1,7 +1,7 @@
 # Tool invocations
-run: bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
+make: bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
 	@echo 'Invoking: C++ Linker'
-	g++ -o bin/run bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
+	g++ -o bin/cTrace bin/main.o bin/Session.o bin/Agent.o bin/Tree.o bin/Graph.o
 	@echo 'Finished building target: Success'
 	@echo ' '
 
@@ -21,12 +21,8 @@ bin/Tree.o: src/Tree.cpp
 	 
 bin/Graph.o: src/Graph.cpp
 	g++ -g -Wall -Weffc++ -std=c++11 -c -IInclude -o bin/Graph.o src/Graph.cpp
-
+	
 
 # Clean the build directory
 clean: 
 	rm -f bin/*
-
-# Running the valgrind
-do: 
-	valgrind --leak-check=yes ./bin/run

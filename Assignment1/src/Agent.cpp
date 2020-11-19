@@ -36,6 +36,7 @@ void ContactTracer::act(Session &session) {
         Graph g(matrix);
         g.setInfectedNodes(session.getGraph().getInfectedNodes());
         session.setGraph(g);
+        delete tree;
     }
 }
 
@@ -62,8 +63,10 @@ void Virus::act(Session &session) {
     int i = 0;
     while (i < NeighborsSize) {
         if (!session.getGraph().isInfected(i) && session.getGraph().getEdges()[nodeInd][i] == 1) {
-            session.addAgent(*(new Virus(i)));
+            Virus* newVirus = new Virus(i);
+            session.addAgent(*newVirus);
             NeighborsSize = -1;
+            delete newVirus;
         }
         i++;
     }

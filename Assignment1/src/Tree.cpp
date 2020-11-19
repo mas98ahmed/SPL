@@ -7,7 +7,7 @@ using namespace std;
 Tree::Tree(int rootLabel) : node(rootLabel), children(vector<Tree*>()) {};
 
 
-Tree::Tree(const Tree &other): node(other.getNode()), children(vector<Tree*>()) {
+Tree::Tree(const Tree &other): node(other.node), children(vector<Tree*>()) {
     clear();
     int childrenSize = other.getChildren().size();
     for(int i=0;i< childrenSize;i++){
@@ -28,10 +28,12 @@ Tree &Tree::operator=(const Tree &other) {
 };
 
 Tree::Tree(Tree &&other): node(other.node), children(vector<Tree*>()) {
-    clear();
-    children = other.children;
-    other.children = vector<Tree*>();
-    other.node = -1;
+    if(this != &other){
+        clear();
+        children = other.children;
+        other.children = vector<Tree*>();
+        other.node = -1;
+    }
 }
 
 Tree &Tree::operator=(Tree &&other) {
@@ -81,7 +83,10 @@ Tree *Tree::createTree(const Session &session, int rootLabel) {
     return ans;
 }
 
-void Tree::addChild(const Tree &child) { children.push_back(child.clone()); }
+void Tree::addChild(const Tree &child) {
+    Tree* newchild = child.clone(); 
+    children.push_back(newchild);
+}
 
 int Tree::getNode() const { return node; }
 
