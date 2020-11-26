@@ -41,9 +41,8 @@ public class MessageBusImpl implements MessageBus {
         }
         synchronized (type) {
             ConcurrentLinkedQueue<MicroService> q2 = topic_event.get(type);
-            if (q2 == null)
-                return;
-            q2.add(m);
+            if (q2 != null)
+                q2.add(m);
         }
     }
 
