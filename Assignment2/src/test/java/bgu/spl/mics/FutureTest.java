@@ -1,15 +1,9 @@
 package bgu.spl.mics;
 
+
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
-
 import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.TimeUnit;
-
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -18,15 +12,37 @@ public class FutureTest {
     private Future<String> future;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         future = new Future<>();
     }
 
     @Test
-    public void testResolve(){
+    public void testResolve() {
         String str = "someResult";
         future.resolve(str);
         assertTrue(future.isDone());
-        assertTrue(str.equals(future.get()));
+        assertEquals(future.get(), str);
+    }
+
+    @Test
+    public void testget() {
+        String name = "Ahmed";
+        assertFalse(future.isDone());
+        String future_name = future.get(3, TimeUnit.SECONDS);
+        assertNull(future_name);
+        future.resolve(name);
+        future_name = future.get(3, TimeUnit.SECONDS);
+        if (future.isDone())
+            assertSame("Ahmed", future_name);
+        if (!future.isDone())
+            assertNull(future_name);
+    }
+
+    @Test
+    public void testIsDone() {
+        String name = "Dan";
+        assertTrue(future.isDone() == false);
+        future.resolve(name);
+        assertTrue(future.isDone() == true);
     }
 }

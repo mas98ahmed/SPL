@@ -29,10 +29,12 @@ public class Future<T> {
      */
 	public T get() {
 		while(!isDone){
-			try{
-				wait();
-			} catch (InterruptedException e){
-				e.printStackTrace();
+			synchronized (this) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
         return result;
@@ -69,13 +71,14 @@ public class Future<T> {
      */
 	public T get(long timeout, TimeUnit unit) {
 		if (!isDone){
-			try {
-				wait(unit.toMillis(timeout));
-			} catch (InterruptedException e){
-				e.printStackTrace();
+			synchronized (this) {
+				try {
+					wait(unit.toMillis(timeout));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return this.result;
 	}
-
 }

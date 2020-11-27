@@ -19,8 +19,6 @@ public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Class<? extends Event>>> micros_event_type = new ConcurrentHashMap<>();
     private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Class<? extends Broadcast>>> micros_broad_type = new ConcurrentHashMap<>();
 
-    private MessageBusImpl(){}
-
     public static MessageBusImpl getInstance(){
         if(instance == null){
             instance = new MessageBusImpl();
@@ -164,14 +162,18 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public Message awaitMessage(MicroService m) throws InterruptedException {
+    public Message awaitMessage(MicroService m) {
         LinkedBlockingQueue<Message> q = micros.get(m);
         if (q == null) {
-            throw new IllegalArgumentException("Subscriber is not registered");
+            throw new IllegalArgumentException("MicroService is not registered");
         }
-        Message msg;
+        Message msg = null;
         synchronized (q){
-            msg = q.take();
+            try {
+                msg = q.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return msg;
     }
