@@ -18,7 +18,7 @@ public class Ewok {
     /**
      * Acquires an Ewok
      */
-    public void acquire() {
+    public synchronized void acquire() {
 		available = false;
     }
 

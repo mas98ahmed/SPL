@@ -1,9 +1,10 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.passiveObjects.Attack;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.concurrent.TimeUnit;
 
 class MessageBusTest {
@@ -24,6 +25,8 @@ class MessageBusTest {
             @Override
             protected void initialize() {}
         };
+        m.register(s);
+        m.register(s1);
     }
 
     @Test
@@ -35,26 +38,56 @@ class MessageBusTest {
     @Test
     void unregisterTest() {
         Assertions.assertDoesNotThrow(()->{m.unregister(s1);});
-        Assertions.assertDoesNotThrow(()->{m.unregister(null);});
     }
 
     @Test
     void awaitMessageTest() {
-        m.register(s);
-        Event<String> msg = new Event<String>() {};
+        AttackEvent msg = new AttackEvent();
+        m.subscribeEvent(AttackEvent.class,s1);
         s.sendEvent(msg);
-        Assertions.assertDoesNotThrow(()->{ m.awaitMessage(s); });
-        Assertions.assertThrows(InterruptedException.class, ()->{ m.awaitMessage(s1); });
-        m.unregister(s);
+        Assertions.assertDoesNotThrow(()->{ m.awaitMessage(s1); });
     }
 
     @Test
     void complete() {
-        m.register(s);
-        Event<String> msg = new Event<String>() {};
+        Event msg = new AttackEvent();
+        m.subscribeEvent(AttackEvent.class,s1);
         Future<String> f =s.sendEvent(msg);
-        m.complete(msg,"Ahmed");
-        Assertions.assertEquals(f.get(3, TimeUnit.SECONDS),"Ahmed");
-        m.unregister(s);
+        m.complete(msg,true);
+        Assertions.assertEquals(f.get(3, TimeUnit.SECONDS),true);
+    }
+
+    @Test
+    void subscribeBroadcastTest() {
+        Broadcast msg = new Broadcast() {};
+        m.subscribeBroadcast(msg.getClass(),s1);
+        s.sendBroadcast(msg);
+        Message massage = m.awaitMessage(s1);
+        Assertions.assertEquals(massage.getClass(),msg.getClass());
+    }
+
+    @Test
+    void subscribeEventTest() {
+        AttackEvent msg = new AttackEvent();
+        m.subscribeEvent(msg.getClass(),s1);
+        s.sendEvent(msg);
+        Message massage = m.awaitMessage(s1);
+        Assertions.assertEquals(massage.getClass(),msg.getClass());
+    }
+
+    @Test
+    void sendBroadcastTest() {
+        Broadcast msg = new Broadcast() {};
+        m.subscribeBroadcast(msg.getClass(),s1);
+        s.sendBroadcast(msg);
+        Assertions.assertEquals(m.awaitMessage(s1),msg);
+    }
+
+    @Test
+    void sendEventTest() {
+        AttackEvent msg = new AttackEvent();
+        m.subscribeEvent(msg.getClass(),s1);
+        s.sendEvent(msg);
+        Assertions.assertEquals(m.awaitMessage(s1),msg);
     }
 }

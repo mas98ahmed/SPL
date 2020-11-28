@@ -19,8 +19,8 @@ public class MessageBusImpl implements MessageBus {
     private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Class<? extends Event>>> micros_event_type = new ConcurrentHashMap<>();
     private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Class<? extends Broadcast>>> micros_broad_type = new ConcurrentHashMap<>();
 
-    public static MessageBusImpl getInstance(){
-        if(instance == null){
+    public static MessageBusImpl getInstance() {
+        if (instance == null) {
             instance = new MessageBusImpl();
         }
         return instance;
@@ -32,10 +32,8 @@ public class MessageBusImpl implements MessageBus {
         micros_event_type.putIfAbsent(m, new ConcurrentLinkedQueue<Class<? extends Event>>());
         synchronized (m) {
             ConcurrentLinkedQueue<Class<? extends Event>> q = micros_event_type.get(m);
-            if (q == null) {
-                return;
-            }
-            q.add(type);
+            if (q != null)
+                q.add(type);
         }
         synchronized (type) {
             ConcurrentLinkedQueue<MicroService> q2 = topic_event.get(type);
@@ -50,16 +48,13 @@ public class MessageBusImpl implements MessageBus {
         micros_broad_type.putIfAbsent(m, new ConcurrentLinkedQueue<>());
         synchronized (m) {
             ConcurrentLinkedQueue<Class<? extends Broadcast>> q = micros_broad_type.get(m);
-            if (q == null) {
-                return;
-            }
-            q.add(type);
+            if (q != null)
+                q.add(type);
         }
         synchronized (type) {
             ConcurrentLinkedQueue<MicroService> q2 = topic_broad.get(type);
-            if (q2 == null)
-                return;
-            q2.add(m);
+            if (q2 != null)
+                q2.add(m);
         }
     }
 
@@ -168,7 +163,7 @@ public class MessageBusImpl implements MessageBus {
             throw new IllegalArgumentException("MicroService is not registered");
         }
         Message msg = null;
-        synchronized (q){
+        synchronized (q) {
             try {
                 msg = q.take();
             } catch (InterruptedException e) {
