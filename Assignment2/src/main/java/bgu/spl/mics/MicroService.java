@@ -21,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  */
 public abstract class MicroService implements Runnable {
+
     private final String name;
-    private MessageBus bus = MessageBusImpl.getInstance();
+    protected MessageBus bus = MessageBusImpl.getInstance();
     private ConcurrentHashMap<String, Callback> broadcasts;
     private ConcurrentHashMap<String, Callback> events;
     private boolean terminated = false;

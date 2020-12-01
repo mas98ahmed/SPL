@@ -5,6 +5,9 @@ import bgu.spl.mics.application.passiveObjects.Attack;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sun.awt.image.ImageWatched;
+
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 class MessageBusTest {
@@ -42,7 +45,7 @@ class MessageBusTest {
 
     @Test
     void awaitMessageTest() {
-        AttackEvent msg = new AttackEvent();
+        AttackEvent msg = new AttackEvent(new Attack(new LinkedList<>(),0));
         m.subscribeEvent(AttackEvent.class,s1);
         s.sendEvent(msg);
         Assertions.assertDoesNotThrow(()->{ m.awaitMessage(s1); });
@@ -50,7 +53,7 @@ class MessageBusTest {
 
     @Test
     void complete() {
-        Event msg = new AttackEvent();
+        Event msg = new AttackEvent(new Attack(new LinkedList<>(),0));
         m.subscribeEvent(AttackEvent.class,s1);
         Future<String> f =s.sendEvent(msg);
         m.complete(msg,true);
@@ -68,7 +71,7 @@ class MessageBusTest {
 
     @Test
     void subscribeEventTest() {
-        AttackEvent msg = new AttackEvent();
+        AttackEvent msg = new AttackEvent(new Attack(new LinkedList<>(),0));
         m.subscribeEvent(msg.getClass(),s1);
         s.sendEvent(msg);
         Message massage = m.awaitMessage(s1);
@@ -85,7 +88,7 @@ class MessageBusTest {
 
     @Test
     void sendEventTest() {
-        AttackEvent msg = new AttackEvent();
+        AttackEvent msg = new AttackEvent(new Attack(new LinkedList<>(),0));
         m.subscribeEvent(msg.getClass(),s1);
         s.sendEvent(msg);
         Assertions.assertEquals(m.awaitMessage(s1),msg);
