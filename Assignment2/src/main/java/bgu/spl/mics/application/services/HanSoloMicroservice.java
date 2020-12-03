@@ -3,8 +3,12 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.*;
+import bgu.spl.mics.application.messages.FinishAttacks.HanSoloFinishEvent;
+import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * HanSoloMicroservices is in charge of the handling {@link AttackEvent}.
@@ -17,6 +21,7 @@ import java.util.*;
 public class HanSoloMicroservice extends MicroService {
 
     private Ewoks ewoks = Ewoks.getInstance();
+    private Diary diary = Diary.getInstance();
 
     public HanSoloMicroservice() {
         super("Han");
@@ -34,15 +39,23 @@ public class HanSoloMicroservice extends MicroService {
                     e.printStackTrace();
                 }
                 complete(msg, true);
-                if (duration > 0)
+                if (duration > 0) {
                     ewoks.sendEwoks(serials, duration);
-                else
+                }
+                else {
                     ewoks.Release(serials);
+                }
+                diary.AddAttack();
             } else {
                 complete(msg, null);
             }
         });
 
-        subscribeBroadcast(TerminateBroadcast.class, msg -> terminate());
+        subscribeEvent(HanSoloFinishEvent.class, msg -> diary.setHanSoloFinish(System.currentTimeMillis()));
+
+        subscribeBroadcast(TerminateBroadcast.class, msg -> {
+            diary.setHanSoloTerminate(System.currentTimeMillis());
+            terminate();
+        });
     }
 }

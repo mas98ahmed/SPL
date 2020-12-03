@@ -2,9 +2,13 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.*;
+import bgu.spl.mics.application.messages.FinishAttacks.C3POFinishEvent;
+import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -18,6 +22,7 @@ import java.util.List;
 public class C3POMicroservice extends MicroService {
 
     private Ewoks ewoks = Ewoks.getInstance();
+    private Diary diary = Diary.getInstance();
 
     public C3POMicroservice() {
         super("C3PO");
@@ -35,15 +40,22 @@ public class C3POMicroservice extends MicroService {
                     e.printStackTrace();
                 }
                 complete(msg, true);
-                if (duration > 0)
+                if (duration > 0) {
                     ewoks.sendEwoks(serials, duration);
-                else
+                } else {
                     ewoks.Release(serials);
+                }
+                diary.AddAttack();
             } else {
                 complete(msg, null);
             }
         });
 
-        subscribeBroadcast(TerminateBroadcast.class, msg -> terminate());
+        subscribeEvent(C3POFinishEvent.class, msg -> diary.setC3POFinish(System.currentTimeMillis()));
+
+        subscribeBroadcast(TerminateBroadcast.class, msg -> {
+            diary.setC3POTerminate(System.currentTimeMillis());
+            terminate();
+        });
     }
 }

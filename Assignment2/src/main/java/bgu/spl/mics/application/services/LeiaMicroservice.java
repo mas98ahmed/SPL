@@ -1,24 +1,23 @@
 package bgu.spl.mics.application.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.*;
+import bgu.spl.mics.application.messages.FinishAttacks.*;
 import bgu.spl.mics.application.passiveObjects.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;;
+;
 
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvent}.
  * This class may not hold references for objects which it is not responsible for:
  * {@link AttackEvent}.
- *
+ * <p>
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class LeiaMicroservice extends MicroService {
 
     private Attack[] attacks;
+    private Diary diary = Diary.getInstance();
 
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
@@ -34,23 +33,23 @@ public class LeiaMicroservice extends MicroService {
         }
         //checking if all the attacks been finished.
         int finished = 0;
-        while(finished == attacks.length) {
+        while (finished == attacks.length) {
             for (int i = 0; i < futures.length; i++) {
-                if (futures[i].get() == true) {
+                if (futures[i].isDone()) {
                     finished++;
                 }
             }
         }
+        sendEvent(new HanSoloFinishEvent());
+        sendEvent(new C3POFinishEvent());
         //sending an event of deactivating the shield.
-        Future<Boolean> deactivate = sendEvent(new DeactivationEvent());
-        if(deactivate.isDone()) {
-            //sending an event of bombing.
-            Future<Boolean> bomb = sendEvent(new BombDestroyerEvent());
-            if (bomb.isDone()) {
-                //writing to the diary.
-                sendBroadcast(new TerminateBroadcast());
-                terminate();
-            }
-        }
+        Future<Boolean> R2D2DeactivateFuture = sendEvent(new DeactivationEvent());
+        while (!R2D2DeactivateFuture.isDone()) ;
+        //sending an event of bombing.
+        Future<Boolean> bomb = sendEvent(new BombDestroyerEvent());
+        while (!bomb.isDone()) ;
+        diary.setLeiaTerminate(System.currentTimeMillis());
+        sendBroadcast(new TerminateBroadcast());
+        terminate();
     }
 }
