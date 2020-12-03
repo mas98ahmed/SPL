@@ -4,7 +4,7 @@ import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.FinishAttacks.*;
 import bgu.spl.mics.application.passiveObjects.*;
-;
+;import java.util.concurrent.CountDownLatch;
 
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvent}.
@@ -18,10 +18,12 @@ public class LeiaMicroservice extends MicroService {
 
     private Attack[] attacks;
     private Diary diary = Diary.getInstance();
+    private CountDownLatch latch;
 
-    public LeiaMicroservice(Attack[] attacks) {
+    public LeiaMicroservice(Attack[] attacks, CountDownLatch latch) {
         super("Leia");
         this.attacks = attacks;
+        this.latch = latch;
     }
 
     @Override
@@ -51,5 +53,6 @@ public class LeiaMicroservice extends MicroService {
         diary.setLeiaTerminate(System.currentTimeMillis());
         sendBroadcast(new TerminateBroadcast());
         terminate();
+        latch.countDown();
     }
 }

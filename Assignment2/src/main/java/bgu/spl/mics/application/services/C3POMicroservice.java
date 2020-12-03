@@ -7,6 +7,7 @@ import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -23,9 +24,11 @@ public class C3POMicroservice extends MicroService {
 
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
+    private CountDownLatch latch;
 
-    public C3POMicroservice() {
+    public C3POMicroservice(CountDownLatch latch) {
         super("C3PO");
+        this.latch = latch;
     }
 
     @Override
@@ -57,5 +60,6 @@ public class C3POMicroservice extends MicroService {
             diary.setC3POTerminate(System.currentTimeMillis());
             terminate();
         });
+        latch.countDown();
     }
 }
