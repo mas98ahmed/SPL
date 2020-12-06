@@ -4,7 +4,10 @@ import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.FinishAttacks.*;
 import bgu.spl.mics.application.passiveObjects.*;
-;import java.util.concurrent.CountDownLatch;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 
 /**
  * LeiaMicroservices Initialized with Attack objects, and sends them as  {@link AttackEvent}.
@@ -18,12 +21,13 @@ public class LeiaMicroservice extends MicroService {
 
     private Attack[] attacks;
     private Diary diary = Diary.getInstance();
-    private CountDownLatch latch;
+    private Logger logger = LogManager.getLogger(LeiaMicroservice.class);
+    private long starting_time;
 
-    public LeiaMicroservice(Attack[] attacks, CountDownLatch latch) {
+    public LeiaMicroservice(Attack[] attacks, long starting_time) {
         super("Leia");
         this.attacks = attacks;
-        this.latch = latch;
+        this.starting_time = starting_time;
     }
 
     @Override
@@ -33,26 +37,41 @@ public class LeiaMicroservice extends MicroService {
         for (int i = 0; i < futures.length; i++) {
             futures[i] = sendEvent(new AttackEvent(attacks[i]));
         }
+       logger.info("all the attacks have been sent");
         //checking if all the attacks been finished.
         int finished = 0;
-        while (finished == attacks.length) {
+        while (finished != attacks.length) {
             for (int i = 0; i < futures.length; i++) {
                 if (futures[i].isDone()) {
                     finished++;
                 }
             }
         }
+        logger.info("HanSolo and C3PO have finished");
         sendEvent(new HanSoloFinishEvent());
         sendEvent(new C3POFinishEvent());
         //sending an event of deactivating the shield.
         Future<Boolean> R2D2DeactivateFuture = sendEvent(new DeactivationEvent());
-        while (!R2D2DeactivateFuture.isDone()) ;
+        boolean R2D2Finish = false;
+        logger.info("R2D2 is starting now");
+        while (!R2D2Finish) {
+           if (R2D2DeactivateFuture.isDone()) {
+                R2D2Finish = true;
+            }
+        }
+        logger.info("R2D2 has finished");
         //sending an event of bombing.
-        Future<Boolean> bomb = sendEvent(new BombDestroyerEvent());
-        while (!bomb.isDone()) ;
-        diary.setLeiaTerminate(System.currentTimeMillis());
+        Future<Boolean> LandoFuture = sendEvent(new BombDestroyerEvent());
+        logger.info("Lando is starting now");
+        boolean LandoFinish = false;
+        while(!LandoFinish) {
+            if (LandoFuture.isDone()) {
+                LandoFinish = true;
+            }
+        }
+        logger.info("Lando has finished");
         sendBroadcast(new TerminateBroadcast());
+        diary.setLeiaTerminate(System.currentTimeMillis() - starting_time);
         terminate();
-        latch.countDown();
     }
 }

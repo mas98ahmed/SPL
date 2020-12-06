@@ -1,5 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.*;
 
 /**
@@ -14,6 +18,7 @@ public class Ewoks {
 
     private static Ewoks instance = null;
     private Map<Integer, Ewok> ewoks = new HashMap();
+    private Logger logger = LogManager.getLogger(Ewoks.class);
 
     public static Ewoks getInstance() {
         if (instance == null) {
@@ -28,7 +33,7 @@ public class Ewoks {
         }
     }
 
-    public synchronized void Release(List<Integer> serials){
+    public synchronized void Release(List<Integer> serials) {
         for (Integer serial : serials) {
             if (ewoks.containsKey(serial))
                 ewoks.get(serial).release();
@@ -36,7 +41,7 @@ public class Ewoks {
         notify();
     }
 
-    public synchronized boolean Acquire(List<Integer> serials){
+    public synchronized boolean Acquire(List<Integer> serials) {
         Collections.sort(serials);
         for (Integer serial : serials) {
             if (!ewoks.containsKey(serial)) {
@@ -62,8 +67,9 @@ public class Ewoks {
                 return;
             }
         }
+
         try {
-            Thread.sleep(time * 100);
+            Thread.sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
