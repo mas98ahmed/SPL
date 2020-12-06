@@ -5,7 +5,6 @@ import bgu.spl.mics.application.passiveObjects.Attack;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;

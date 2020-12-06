@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Passive object representing the resource manager.
  * <p>
@@ -69,7 +71,7 @@ public class Ewoks {
         }
 
         try {
-            Thread.sleep(time);
+            sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -25,12 +25,11 @@ public class C3POMicroservice extends MicroService {
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
     private Logger logger = LogManager.getLogger(C3POMicroservice.class);
-    private long starting_time;
+    private long Finishing_attacks_time = 0;
 
-    public C3POMicroservice(CountDownLatch latch, long starting_time) {
+    public C3POMicroservice(CountDownLatch latch) {
         super("C3PO");
         this.latch = latch;
-        this.starting_time = starting_time;
     }
 
     @Override
@@ -43,15 +42,16 @@ public class C3POMicroservice extends MicroService {
                 ewoks.sendEwoks(serials, duration);
                 diary.AddAttack();
                 complete(msg, true);
+                Finishing_attacks_time = System.currentTimeMillis();
             } else {
                 complete(msg, null);
             }
         });
 
-        subscribeEvent(C3POFinishEvent.class, msg -> diary.setC3POFinish(System.currentTimeMillis() - starting_time));
+        subscribeEvent(C3POFinishEvent.class, msg -> diary.setC3POFinish(Finishing_attacks_time));
 
         subscribeBroadcast(TerminateBroadcast.class, msg -> {
-            diary.setC3POTerminate(System.currentTimeMillis() - starting_time);
+            diary.setC3POTerminate(System.currentTimeMillis());
             terminate();
         });
         latch.countDown();

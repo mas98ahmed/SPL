@@ -35,12 +35,11 @@ public class Main {
             Ewoks ewoks = Ewoks.getInstance();
             ewoks.load(Ewoks(ewoks_num));
             CountDownLatch latch = new CountDownLatch(4);
-            long starting_time = System.currentTimeMillis();
             List<Thread> threads = new LinkedList<>();
-            threads.add(new Thread(new HanSoloMicroservice(latch, starting_time)));
-            threads.add(new Thread(new C3POMicroservice(latch, starting_time)));
-            threads.add(new Thread(new R2D2Microservice(r2d2_duration, latch, starting_time)));
-            threads.add(new Thread(new LandoMicroservice(lando_duration, latch, starting_time)));
+            threads.add(new Thread(new HanSoloMicroservice(latch)));
+            threads.add(new Thread(new C3POMicroservice(latch)));
+            threads.add(new Thread(new R2D2Microservice(r2d2_duration, latch)));
+            threads.add(new Thread(new LandoMicroservice(lando_duration, latch)));
             for (Thread thread : threads) {
                 thread.start();
             }
@@ -50,7 +49,7 @@ public class Main {
                 e.printStackTrace();
             }
             try {
-                Thread Leia = new Thread(new LeiaMicroservice(Attacks(attacks), starting_time));
+                Thread Leia = new Thread(new LeiaMicroservice(Attacks(attacks)));
                 Leia.start();
                 Leia.join();
                 for (Thread thread : threads) {
