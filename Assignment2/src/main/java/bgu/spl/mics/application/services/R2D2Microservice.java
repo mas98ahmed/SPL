@@ -23,7 +23,7 @@ public class R2D2Microservice extends MicroService {
     private long duration;
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-    private Logger logger = LogManager.getLogger(R2D2Microservice.class);
+    //private Logger logger = LogManager.getLogger(R2D2Microservice.class);
 
     public R2D2Microservice(long duration, CountDownLatch latch) {
         super("R2D2");

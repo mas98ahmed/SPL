@@ -20,7 +20,7 @@ public class Ewoks {
 
     private static Ewoks instance = null;
     private Map<Integer, Ewok> ewoks = new HashMap();
-    private Logger logger = LogManager.getLogger(Ewoks.class);
+    //private Logger logger = LogManager.getLogger(Ewoks.class);
 
     public static Ewoks getInstance() {
         if (instance == null) {

@@ -24,7 +24,7 @@ public class HanSoloMicroservice extends MicroService {
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-    private Logger logger = LogManager.getLogger(HanSoloMicroservice.class);
+   // private Logger logger = LogManager.getLogger(HanSoloMicroservice.class);
     private long Finishing_attacks_time = 0;
 
     public HanSoloMicroservice(CountDownLatch latch) {
@@ -36,7 +36,7 @@ public class HanSoloMicroservice extends MicroService {
     protected void initialize() {
         subscribeEvent(AttackEvent.class, msg -> {
             List<Integer> serials = msg.getAttack().getSerials();
-            logger.info("HanSolo started");
+           // logger.info("HanSolo started");
             if (ewoks.Acquire(serials)) {
                 int duration = msg.getAttack().getDuration();
                 ewoks.sendEwoks(serials, duration);

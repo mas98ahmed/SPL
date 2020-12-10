@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 public class Main {
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(Main.class);
+        logger.info("started");
         JsonParser parser = new JsonParser();
         try (FileReader fileReader = new FileReader(args[0])) {
             Object obj = parser.parse(fileReader);

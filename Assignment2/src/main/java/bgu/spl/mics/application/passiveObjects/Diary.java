@@ -17,15 +17,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Diary {
 
     private static Diary instance = null;
-    int TotalAttacks = 0;
-    long HanSoloFinish;
-    long C3POFinish;
-    long R2D2Deactivate;
-    long LeiaTerminate;
-    long HanSoloTerminate;
-    long C3POTerminate;
-    long R2D2Terminate;
-    long LandoTerminate;
+    private AtomicInteger TotalAttacks = new AtomicInteger(0);
+    private long HanSoloFinish;
+    private long C3POFinish;
+    private long R2D2Deactivate;
+    private long LeiaTerminate;
+    private long HanSoloTerminate;
+    private long C3POTerminate;
+    private long R2D2Terminate;
+    private long LandoTerminate;
 
     public static Diary getInstance() {
         if (instance == null) {
@@ -34,7 +34,7 @@ public class Diary {
         return instance;
     }
 
-    public void printToFile(String filename){
+    public void printToFile(String filename) {
         try (FileWriter file = new FileWriter(filename)) {
             new Gson().toJson(this, file);
         } catch (IOException e) {
@@ -74,7 +74,10 @@ public class Diary {
         R2D2Terminate = r2D2Terminate;
     }
 
-    public synchronized void AddAttack() {
-        TotalAttacks ++;
+    public void AddAttack() {
+        int value;
+        do {
+            value = TotalAttacks.get();
+        } while (!TotalAttacks.compareAndSet(value, value + 1));
     }
 }

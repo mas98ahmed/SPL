@@ -20,7 +20,7 @@ public class LeiaMicroservice extends MicroService {
 
     private Attack[] attacks;
     private Diary diary = Diary.getInstance();
-    private Logger logger = LogManager.getLogger(LeiaMicroservice.class);
+    //private Logger logger = LogManager.getLogger(LeiaMicroservice.class);
 
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
@@ -34,25 +34,25 @@ public class LeiaMicroservice extends MicroService {
         for (int i = 0; i < futures.length; i++) {
             futures[i] = sendEvent(new AttackEvent(attacks[i]));
         }
-        logger.info("all the attacks have been sent");
+        //logger.info("all the attacks have been sent");
         //checking if all the attacks been finished.
         for (int i = 0; i < futures.length; i++) {
             if (futures[i].get() == true){ }
         }
-        logger.info("HanSolo and C3PO have finished");
+        //logger.info("HanSolo and C3PO have finished");
         sendEvent(new HanSoloFinishEvent());
         sendEvent(new C3POFinishEvent());
         //sending an event of deactivating the shield.
         Future<Boolean> R2D2DeactivateFuture = sendEvent(new DeactivationEvent());
         boolean R2D2Finish = false;
-        logger.info("R2D2 is starting now");
+        //logger.info("R2D2 is starting now");
         if (R2D2DeactivateFuture.get() == true) {
-            logger.info("R2D2 has finished");
+           // logger.info("R2D2 has finished");
             //sending an event of bombing.
             Future<Boolean> LandoFuture = sendEvent(new BombDestroyerEvent());
-            logger.info("Lando is starting now");
+            //logger.info("Lando is starting now");
             if (LandoFuture.get() == true) {
-                logger.info("Lando has finished");
+             //   logger.info("Lando has finished");
                 sendBroadcast(new TerminateBroadcast());
                 diary.setLeiaTerminate(System.currentTimeMillis());
                 terminate();

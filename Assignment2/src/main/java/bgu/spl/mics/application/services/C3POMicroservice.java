@@ -24,7 +24,7 @@ public class C3POMicroservice extends MicroService {
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-    private Logger logger = LogManager.getLogger(C3POMicroservice.class);
+    //private Logger logger = LogManager.getLogger(C3POMicroservice.class);
     private long Finishing_attacks_time = 0;
 
     public C3POMicroservice(CountDownLatch latch) {
@@ -36,7 +36,7 @@ public class C3POMicroservice extends MicroService {
     protected void initialize() {
         subscribeEvent(AttackEvent.class, msg -> {
             List<Integer> serials = msg.getAttack().getSerials();
-            logger.info("C3PO started");
+           // logger.info("C3PO started");
             if (ewoks.Acquire(serials)) {
                 int duration = msg.getAttack().getDuration();
                 ewoks.sendEwoks(serials, duration);

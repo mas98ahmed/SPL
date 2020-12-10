@@ -22,7 +22,7 @@ public class LandoMicroservice  extends MicroService {
     private long duration;
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-    private Logger logger = LogManager.getLogger(LandoMicroservice.class);
+   // private Logger logger = LogManager.getLogger(LandoMicroservice.class);
 
 
     public LandoMicroservice(long duration, CountDownLatch latch) {
