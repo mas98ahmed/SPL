@@ -4,12 +4,7 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.util.concurrent.CountDownLatch;
-
 import static java.lang.Thread.sleep;
 
 /**
@@ -22,13 +17,11 @@ public class LandoMicroservice  extends MicroService {
     private long duration;
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-   // private Logger logger = LogManager.getLogger(LandoMicroservice.class);
 
 
-    public LandoMicroservice(long duration, CountDownLatch latch) {
+    public LandoMicroservice(long duration) {
         super("Lando");
         this.duration = duration;
-        this.latch = latch;
     }
 
     @Override
@@ -47,5 +40,9 @@ public class LandoMicroservice  extends MicroService {
             terminate();
         });
         latch.countDown();
+    }
+
+    public void setLatch(CountDownLatch latch) {
+        this.latch = latch;
     }
 }

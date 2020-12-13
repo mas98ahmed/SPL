@@ -5,8 +5,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.FinishAttacks.C3POFinishEvent;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -24,19 +22,16 @@ public class C3POMicroservice extends MicroService {
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-    //private Logger logger = LogManager.getLogger(C3POMicroservice.class);
     private long Finishing_attacks_time = 0;
 
-    public C3POMicroservice(CountDownLatch latch) {
+    public C3POMicroservice() {
         super("C3PO");
-        this.latch = latch;
     }
 
     @Override
     protected void initialize() {
         subscribeEvent(AttackEvent.class, msg -> {
             List<Integer> serials = msg.getAttack().getSerials();
-           // logger.info("C3PO started");
             if (ewoks.Acquire(serials)) {
                 int duration = msg.getAttack().getDuration();
                 ewoks.sendEwoks(serials, duration);
@@ -55,5 +50,9 @@ public class C3POMicroservice extends MicroService {
             terminate();
         });
         latch.countDown();
+    }
+
+    public void setLatch(CountDownLatch latch) {
+        this.latch = latch;
     }
 }

@@ -1,8 +1,5 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.services.LeiaMicroservice;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,8 +28,6 @@ public abstract class MicroService implements Runnable {
     private ConcurrentHashMap<String, Callback> broadcasts;
     private ConcurrentHashMap<String, Callback> events;
     private boolean terminated = false;
-    private Logger logger = LogManager.getLogger(MicroService.class);
-
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
@@ -174,7 +169,6 @@ public abstract class MicroService implements Runnable {
                         Callback tmp = events.get(msg.getClass().getName());
                         tmp.call(msg);
                     }
-                    //logger.info(String.format("msg for: %s", name));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

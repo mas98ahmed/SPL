@@ -4,8 +4,6 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.passiveObjects.Diary;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.Thread.sleep;
@@ -23,12 +21,10 @@ public class R2D2Microservice extends MicroService {
     private long duration;
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-    //private Logger logger = LogManager.getLogger(R2D2Microservice.class);
 
-    public R2D2Microservice(long duration, CountDownLatch latch) {
+    public R2D2Microservice(long duration) {
         super("R2D2");
         this.duration = duration;
-        this.latch = latch;
     }
 
     @Override
@@ -49,5 +45,9 @@ public class R2D2Microservice extends MicroService {
 
         });
         latch.countDown();
+    }
+
+    public void setLatch(CountDownLatch latch) {
+        this.latch = latch;
     }
 }

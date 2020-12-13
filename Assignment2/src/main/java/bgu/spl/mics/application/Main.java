@@ -13,8 +13,6 @@ import java.util.*;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * This is the Main class of the application. You should parse the input file,
@@ -23,24 +21,36 @@ import org.apache.logging.log4j.Logger;
  */
 public class Main {
     public static void main(String[] args) {
-        Logger logger = LogManager.getLogger(Main.class);
-        logger.info("started");
         JsonParser parser = new JsonParser();
         try (FileReader fileReader = new FileReader(args[0])) {
             Object obj = parser.parse(fileReader);
             JsonObject jsonobject = (JsonObject) obj;
+            //Saving the Data of the input file.
             JsonArray attacks = jsonobject.get("attacks").getAsJsonArray();
             long r2d2_duration = jsonobject.get("R2D2").getAsLong();
             long lando_duration = jsonobject.get("Lando").getAsLong();
             int ewoks_num = jsonobject.get("Ewoks").getAsInt();
             Ewoks ewoks = Ewoks.getInstance();
             ewoks.load(Ewoks(ewoks_num));
+            //=====================================================================
             CountDownLatch latch = new CountDownLatch(4);
+            //The Microservices
+            HanSoloMicroservice HanSolo = new HanSoloMicroservice();
+            HanSolo.setLatch(latch);
+            C3POMicroservice C3PO = new C3POMicroservice();
+            C3PO.setLatch(latch);
+            R2D2Microservice R2D2 = new R2D2Microservice(r2d2_duration);
+            R2D2.setLatch(latch);
+            LandoMicroservice Lando = new LandoMicroservice(lando_duration);
+            Lando.setLatch(latch);
+            //=====================================================================
+            //Threads.
             List<Thread> threads = new LinkedList<>();
-            threads.add(new Thread(new HanSoloMicroservice(latch)));
-            threads.add(new Thread(new C3POMicroservice(latch)));
-            threads.add(new Thread(new R2D2Microservice(r2d2_duration, latch)));
-            threads.add(new Thread(new LandoMicroservice(lando_duration, latch)));
+            threads.add(new Thread(HanSolo));
+            threads.add(new Thread(C3PO));
+            threads.add(new Thread(R2D2));
+            threads.add(new Thread(Lando));
+            //Running the threads.
             for (Thread thread : threads) {
                 thread.start();
             }
@@ -64,7 +74,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("finish all the program");
     }
 
     private static Attack[] Attacks(JsonArray atks) {

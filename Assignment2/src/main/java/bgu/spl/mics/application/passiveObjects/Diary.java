@@ -1,9 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-import bgu.spl.mics.application.messages.FinishAttacks.HanSoloFinishEvent;
 import com.google.gson.Gson;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,5 +77,41 @@ public class Diary {
         do {
             value = TotalAttacks.get();
         } while (!TotalAttacks.compareAndSet(value, value + 1));
+    }
+
+    public AtomicInteger getNumberOfAttacks() {
+        return TotalAttacks;
+    }
+
+    public long getC3POFinish() {
+        return C3POFinish;
+    }
+
+    public long getHanSoloFinish() {
+        return HanSoloFinish;
+    }
+
+    public long getR2D2Deactivate() {
+        return R2D2Deactivate;
+    }
+
+    public long getHanSoloTerminate() {
+        return HanSoloTerminate;
+    }
+
+    public long getC3POTerminate() {
+        return C3POTerminate;
+    }
+
+    public long getLandoTerminate() {
+        return LandoTerminate;
+    }
+
+    public long getR2D2Terminate() {
+        return R2D2Terminate;
+    }
+
+    public void resetNumberAttacks() {
+        TotalAttacks = new AtomicInteger(0);
     }
 }

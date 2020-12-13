@@ -6,8 +6,6 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.FinishAttacks.HanSoloFinishEvent;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -24,19 +22,16 @@ public class HanSoloMicroservice extends MicroService {
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
     private CountDownLatch latch;
-   // private Logger logger = LogManager.getLogger(HanSoloMicroservice.class);
     private long Finishing_attacks_time = 0;
 
-    public HanSoloMicroservice(CountDownLatch latch) {
+    public HanSoloMicroservice() {
         super("Han");
-        this.latch = latch;
     }
 
     @Override
     protected void initialize() {
         subscribeEvent(AttackEvent.class, msg -> {
             List<Integer> serials = msg.getAttack().getSerials();
-           // logger.info("HanSolo started");
             if (ewoks.Acquire(serials)) {
                 int duration = msg.getAttack().getDuration();
                 ewoks.sendEwoks(serials, duration);
@@ -55,5 +50,9 @@ public class HanSoloMicroservice extends MicroService {
             terminate();
         });
         latch.countDown();
+    }
+
+    public void setLatch(CountDownLatch latch) {
+        this.latch = latch;
     }
 }

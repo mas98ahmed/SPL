@@ -1,11 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.*;
-
 import static java.lang.Thread.sleep;
 
 /**
@@ -20,7 +16,6 @@ public class Ewoks {
 
     private static Ewoks instance = null;
     private Map<Integer, Ewok> ewoks = new HashMap();
-    //private Logger logger = LogManager.getLogger(Ewoks.class);
 
     public static Ewoks getInstance() {
         if (instance == null) {
