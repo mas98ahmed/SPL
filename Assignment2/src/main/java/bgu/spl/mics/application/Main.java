@@ -33,16 +33,11 @@ public class Main {
             Ewoks ewoks = Ewoks.getInstance();
             ewoks.load(Ewoks(ewoks_num));
             //=====================================================================
-            CountDownLatch latch = new CountDownLatch(4);
             //The Microservices
             HanSoloMicroservice HanSolo = new HanSoloMicroservice();
-            HanSolo.setLatch(latch);
             C3POMicroservice C3PO = new C3POMicroservice();
-            C3PO.setLatch(latch);
             R2D2Microservice R2D2 = new R2D2Microservice(r2d2_duration);
-            R2D2.setLatch(latch);
             LandoMicroservice Lando = new LandoMicroservice(lando_duration);
-            Lando.setLatch(latch);
             //=====================================================================
             //Threads.
             List<Thread> threads = new LinkedList<>();
@@ -55,7 +50,8 @@ public class Main {
                 thread.start();
             }
             try {
-                latch.await();
+                //sleep the main for a while to let the other threads that we've defined to subscribe.
+                Thread.sleep(20);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -68,7 +64,7 @@ public class Main {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }//printing to the diary
             Diary diary = Diary.getInstance();
             diary.printToFile(args[1]);
         } catch (IOException e) {

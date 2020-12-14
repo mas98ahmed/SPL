@@ -6,6 +6,7 @@ import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.FinishAttacks.HanSoloFinishEvent;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
+
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -21,7 +22,6 @@ public class HanSoloMicroservice extends MicroService {
 
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
-    private CountDownLatch latch;
     private long Finishing_attacks_time = 0;
 
     public HanSoloMicroservice() {
@@ -49,10 +49,5 @@ public class HanSoloMicroservice extends MicroService {
             diary.setHanSoloTerminate(System.currentTimeMillis());
             terminate();
         });
-        latch.countDown();
-    }
-
-    public void setLatch(CountDownLatch latch) {
-        this.latch = latch;
     }
 }

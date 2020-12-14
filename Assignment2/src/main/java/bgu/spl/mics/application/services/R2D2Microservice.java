@@ -20,7 +20,7 @@ public class R2D2Microservice extends MicroService {
 
     private long duration;
     private Diary diary = Diary.getInstance();
-    private CountDownLatch latch;
+
 
     public R2D2Microservice(long duration) {
         super("R2D2");
@@ -44,10 +44,5 @@ public class R2D2Microservice extends MicroService {
             terminate();
 
         });
-        latch.countDown();
-    }
-
-    public void setLatch(CountDownLatch latch) {
-        this.latch = latch;
     }
 }

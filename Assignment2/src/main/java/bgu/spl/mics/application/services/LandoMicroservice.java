@@ -4,7 +4,9 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
+
 import java.util.concurrent.CountDownLatch;
+
 import static java.lang.Thread.sleep;
 
 /**
@@ -12,11 +14,10 @@ import static java.lang.Thread.sleep;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class LandoMicroservice  extends MicroService {
+public class LandoMicroservice extends MicroService {
 
     private long duration;
     private Diary diary = Diary.getInstance();
-    private CountDownLatch latch;
 
 
     public LandoMicroservice(long duration) {
@@ -39,10 +40,5 @@ public class LandoMicroservice  extends MicroService {
             diary.setLandoTerminate(System.currentTimeMillis());
             terminate();
         });
-        latch.countDown();
-    }
-
-    public void setLatch(CountDownLatch latch) {
-        this.latch = latch;
     }
 }
