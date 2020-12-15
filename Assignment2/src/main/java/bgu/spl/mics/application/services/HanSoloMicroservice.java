@@ -23,9 +23,11 @@ public class HanSoloMicroservice extends MicroService {
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
     private long Finishing_attacks_time = 0;
+    private CountDownLatch latch;
 
-    public HanSoloMicroservice() {
+    public HanSoloMicroservice(CountDownLatch latch) {
         super("Han");
+        this.latch = latch;
     }
 
     @Override
@@ -49,5 +51,6 @@ public class HanSoloMicroservice extends MicroService {
             diary.setHanSoloTerminate(System.currentTimeMillis());
             terminate();
         });
+        latch.countDown();
     }
 }

@@ -20,11 +20,13 @@ public class R2D2Microservice extends MicroService {
 
     private long duration;
     private Diary diary = Diary.getInstance();
+    private CountDownLatch latch;
 
 
-    public R2D2Microservice(long duration) {
+    public R2D2Microservice(long duration, CountDownLatch latch) {
         super("R2D2");
         this.duration = duration;
+        this.latch = latch;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class R2D2Microservice extends MicroService {
         subscribeBroadcast(TerminateBroadcast.class, msg -> {
             diary.setR2D2Terminate(System.currentTimeMillis());
             terminate();
-
         });
+        latch.countDown();
     }
 }

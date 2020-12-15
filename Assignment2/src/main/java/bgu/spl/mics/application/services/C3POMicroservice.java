@@ -22,9 +22,11 @@ public class C3POMicroservice extends MicroService {
     private Ewoks ewoks = Ewoks.getInstance();
     private Diary diary = Diary.getInstance();
     private long Finishing_attacks_time = 0;
+    private CountDownLatch latch;
 
-    public C3POMicroservice() {
+    public C3POMicroservice(CountDownLatch latch) {
         super("C3PO");
+        this.latch = latch;
     }
 
     @Override
@@ -48,5 +50,6 @@ public class C3POMicroservice extends MicroService {
             diary.setC3POTerminate(System.currentTimeMillis());
             terminate();
         });
+        latch.countDown();
     }
 }

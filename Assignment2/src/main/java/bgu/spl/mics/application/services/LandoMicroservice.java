@@ -18,11 +18,13 @@ public class LandoMicroservice extends MicroService {
 
     private long duration;
     private Diary diary = Diary.getInstance();
+    private CountDownLatch latch;
 
 
-    public LandoMicroservice(long duration) {
+    public LandoMicroservice(long duration, CountDownLatch latch) {
         super("Lando");
         this.duration = duration;
+        this.latch = latch;
     }
 
     @Override
@@ -40,5 +42,6 @@ public class LandoMicroservice extends MicroService {
             diary.setLandoTerminate(System.currentTimeMillis());
             terminate();
         });
+        latch.countDown();
     }
 }
