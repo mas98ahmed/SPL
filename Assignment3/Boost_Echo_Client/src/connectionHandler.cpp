@@ -7,7 +7,9 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::string;
- 
+ using namespace std;
+
+
 ConnectionHandler::ConnectionHandler(string host, short port): host_(host), port_(port), io_service_(), socket_(io_service_){}
     
 ConnectionHandler::~ConnectionHandler() {
@@ -15,7 +17,7 @@ ConnectionHandler::~ConnectionHandler() {
 }
  
 bool ConnectionHandler::connect() {
-    std::cout << "Starting connect to " 
+    std::cout << "Starting connect to "
         << host_ << ":" << port_ << std::endl;
     try {
 		tcp::endpoint endpoint(boost::asio::ip::address::from_string(host_), port_); // the server endpoint
@@ -30,6 +32,7 @@ bool ConnectionHandler::connect() {
     }
     return true;
 }
+
  
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     size_t tmp = 0;
@@ -105,5 +108,29 @@ void ConnectionHandler::close() {
         socket_.close();
     } catch (...) {
         std::cout << "closing failed: connection already closed" << std::endl;
+    }
+}
+
+short ConnectionHandler::bytesToShort(char* bytesArr)
+{
+    short result = (short)((bytesArr[0] & 0xff) << 8);
+    result += (short)(bytesArr[1] & 0xff);
+    return result;
+}
+
+void ConnectionHandler::shortToBytes(short num, char* bytesArr)
+{
+    bytesArr[0] = ((num >> 8) & 0xFF);
+    bytesArr[1] = (num & 0xFF);
+}
+
+void ConnectionHandler::analyse(vector<string*> commandline, string line){
+    // I have to handle edge cases here.
+    string temp = line;
+    string delimiter = " ";
+    while (temp.length() > 0){
+        string token = temp.substr(0,temp.find(delimiter));
+        temp = temp.substr(temp.find(delimiter));
+        commandline.push_back(&token);
     }
 }
