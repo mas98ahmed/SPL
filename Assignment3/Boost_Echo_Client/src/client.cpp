@@ -7,7 +7,7 @@
 
 using namespace std;
 bool connected = true;
-mutex &_mutex;
+mutex _mutex;
 
 
 class KeyboardReader{
@@ -15,68 +15,146 @@ class KeyboardReader{
 private:
     ConnectionHandler * connectionHandler;
 public:
-    KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(connectionHandler){}
+    KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
 
         while (connected){
 
-            string line = cin.getline();
+            lock_guard<mutex> lock(_mutex);
+            const short bufsize = 1024;
+            char buf[bufsize];
+            cin.getline(buf,bufsize);
+            string line(buf);
             int len = line.length();
             vector<string*> commandline;
-            connectionHandler.analyse(commandline,line);
+            connectionHandler->analyse(commandline,line);
 
-            if (commandline[0] == "ADMINREG"){
-                line = line.substr(line.find(delimiter)+1);
-                string username = line.substr(0,line.find(delimiter));
-                line = line.substr(line.find(delimiter)+1);
-                string password = line;
-                connectionHandler->getBytes("1",2);
+
+
+            if (*commandline[0] == "ADMINREG"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(1, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                connectionHandler->sendFrameAscii(*commandline[1],'\0');
+                connectionHandler->sendFrameAscii(*commandline[2],'\0');
+                free(opcode);
             }
-            else if (commandline[0] == "STUDENTREG"){
-                line = line.substr(line.find(delimiter));
-                line = line.substr(line.find(delimiter)+1);
+            else if (*commandline[0] == "STUDENTREG"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(2, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                connectionHandler->sendFrameAscii(*commandline[1],'\0');
+                connectionHandler->sendFrameAscii(*commandline[2],'\0');
+                free(opcode);
             }
-            else if (commandline[0] == "LOGIN"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "LOGIN"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(3, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                connectionHandler->sendFrameAscii(*commandline[1],'\0');
+                connectionHandler->sendFrameAscii(*commandline[2],'\0');
+                free(opcode);
             }
-            else if (commandline[0] == "LOGOUT"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "LOGOUT"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(4, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                free(opcode);
             }
-            else if (commandline[0] == "COURSEREG"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "COURSEREG"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(5, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                short * courseNumber = (short *)malloc( 2);
+                char command[commandline[1]->length()];
+                connectionHandler->relax(command,commandline[1]);
+                connectionHandler->sendBytes(command,2);
+                free(opcode);
+                free(opcode);
+                free(courseNumber);
             }
-            else if (commandline[0] == "KDAMCHECK"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "KDAMCHECK"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(6, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                short * courseNumber = (short *)malloc( 2);
+                char command[commandline[1]->length()];
+                connectionHandler->relax(command,commandline[1]);
+                connectionHandler->sendBytes(command,2);
+                free(opcode);
+                free(opcode);
+                free(courseNumber);
+
             }
-            else if (commandline[0] == "COURSESTAT"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "COURSESTAT"){char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(7, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                short * courseNumber = (short *)malloc( 2);
+                char command[commandline[1]->length()];
+                connectionHandler->relax(command,commandline[1]);
+                connectionHandler->sendBytes(command,2);
+                free(opcode);
+                free(opcode);
+                free(courseNumber);
             }
-            else if (commandline[0] == "STUDENTSTAT"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "STUDENTSTAT"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(8, opcode);
+                connectionHandler->sendBytes(opcode,2);
+                connectionHandler->sendFrameAscii(*commandline[1],'\0');
+                free(opcode);
             }
-            else if (commandline[0] == "ISREGISTERED"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "ISREGISTERED"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(9, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                short * courseNumber = (short *)malloc( 2);
+                char command[commandline[1]->length()];
+                connectionHandler->relax(command,commandline[1]);
+                connectionHandler->sendBytes(command,2);
+                free(opcode);
+                free(opcode);
+                free(courseNumber);
             }
-            else if (commandline[0] == "UNREGISTER"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "UNREGISTER"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(10, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                short * courseNumber = (short *)malloc( 2);
+                char command[commandline[1]->length()];
+                connectionHandler->relax(command,commandline[1]);
+                connectionHandler->sendBytes(command,2);
+                free(opcode);
+                free(opcode);
+                free(courseNumber);
             }
-            else if (commandline[0] == "MYCOURSES"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "MYCOURSES"){
+                char  * opcode = (char *)(malloc(2));
+                connectionHandler->shortToBytes(11, opcode);
+                connectionHandler->sendBytes(opcode, 2);
+                short * courseNumber = (short *)malloc( 2);
+                char command[commandline[1]->length()];
+                connectionHandler->relax(command,commandline[1]);
+                connectionHandler->sendBytes(command,2);
+                free(opcode);
+                free(opcode);
+                free(courseNumber);
             }
-            else if (commandline[0] == "ACK"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "ACK"){
             }
-            else if (commandline[0] == "ERR"){
-                line = line.substr(line.find(delimiter));
+            else if (*commandline[0] == "ERR"){
             }
                 else{
 
                 }
+
         }
 
 
 
+
     }
+
 };
 
 
@@ -85,7 +163,7 @@ class SocketReader{
 private:
     ConnectionHandler * connectionHandler;
 public:
-    SocketReader(ConnectionHandler &connectionHandler) : connectionHandler(connectionHandler){}
+    SocketReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
         while (connected) {
         lock_guard<mutex> lock(_mutex);
@@ -95,13 +173,7 @@ public:
 
 
 
-
-
-
-
-
-
-    int main (int argc, char *argv[]) {
+int main (int argc, char *argv[]) {
         if (argc < 3) {
             std::cerr << "Usage: " << argv[0] << " host port" << std::endl << std::endl;
             return -1;
@@ -118,14 +190,13 @@ public:
         KeyboardReader keyboardReader(connectionHandler);
         SocketReader socketReader(connectionHandler);
 
-        thread keyboardListener(&keyboardReader::run,keyboardReader);
-        thread socketListener(&socketReader::run,socketReader);
+        thread keyboardListener(&KeyboardReader::run,keyboardReader);
+        thread socketListener(&SocketReader::run,socketReader);
 
         keyboardListener.join();
         socketListener.join();
 
         connectionHandler.close();
 
-    }
 
-};
+    }

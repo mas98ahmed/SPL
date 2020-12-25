@@ -55,6 +55,7 @@ public:
 
     void analyse(std::vector<string *> commandline, std::string line);
 
+    void relax(char *charArray, const string *str);
 }; //class ConnectionHandler
  
 #endif

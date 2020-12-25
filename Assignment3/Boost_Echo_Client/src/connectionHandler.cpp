@@ -134,3 +134,9 @@ void ConnectionHandler::analyse(vector<string*> commandline, string line){
         commandline.push_back(&token);
     }
 }
+
+void ConnectionHandler::relax (char * charArray, const string * str){
+    for (int i = 0; i < str->length() ; ++i) {
+        charArray[i] = str->at(i);
+    }
+}
