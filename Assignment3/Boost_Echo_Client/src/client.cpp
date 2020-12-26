@@ -3,6 +3,7 @@
 //
 
 #include "../include/connectionHandler.h"
+#include <stdlib.h>
 #include <mutex>
 
 using namespace std;
@@ -21,11 +22,11 @@ public:
         while (connected){
 
             lock_guard<mutex> lock(_mutex);
+
             const short bufsize = 1024;
             char buf[bufsize];
             cin.getline(buf,bufsize);
             string line(buf);
-            int len = line.length();
             vector<string*> commandline;
             connectionHandler->analyse(commandline,line);
 
@@ -70,7 +71,6 @@ public:
                 connectionHandler->relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
-                free(opcode);
                 free(courseNumber);
             }
             else if (*commandline[0] == "KDAMCHECK"){
@@ -82,7 +82,6 @@ public:
                 connectionHandler->relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
-                free(opcode);
                 free(courseNumber);
 
             }
@@ -93,7 +92,6 @@ public:
                 char command[commandline[1]->length()];
                 connectionHandler->relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
-                free(opcode);
                 free(opcode);
                 free(courseNumber);
             }
@@ -113,7 +111,6 @@ public:
                 connectionHandler->relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
-                free(opcode);
                 free(courseNumber);
             }
             else if (*commandline[0] == "UNREGISTER"){
@@ -124,7 +121,6 @@ public:
                 char command[commandline[1]->length()];
                 connectionHandler->relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
-                free(opcode);
                 free(opcode);
                 free(courseNumber);
             }
@@ -137,15 +133,12 @@ public:
                 connectionHandler->relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
-                free(opcode);
                 free(courseNumber);
             }
-            else if (*commandline[0] == "ACK"){
-            }
-            else if (*commandline[0] == "ERR"){
-            }
-                else{
 
+            else{
+                cout<< "Damn wrong message detected" <<endl;
+                break;
                 }
 
         }
@@ -167,6 +160,31 @@ public:
     void run() {
         while (connected) {
         lock_guard<mutex> lock(_mutex);
+
+            char * replyBytes[4];
+            connectionHandler->getBytes(*replyBytes,4);
+            char * opcodeAsBytes[] = {replyBytes[0], replyBytes[1]};
+            char * messageOpcodeAsBytes[] = {replyBytes[2],replyBytes[3]};
+
+            short opcode = connectionHandler->bytesToShort(*opcodeAsBytes);
+            short messageOpcode = connectionHandler->bytesToShort(*messageOpcodeAsBytes);
+
+
+            if (opcode == 12){
+                string optionalPart;
+                connectionHandler->getFrameAscii(optionalPart,'\0');
+                optionalPart = optionalPart.substr(0,optionalPart.length()-1); // it may be -2 to remove null character, will see during testing...
+                string space = " ";
+                optionalPart = space.append(optionalPart);
+                cout<< "ACK " << messageOpcode << optionalPart << endl;
+            }
+            else if (opcode == 13){
+                cout<<"ERROR " << messageOpcode << endl;
+            }
+            else{
+                cout<< "Damn wrong message detected" <<endl;
+                break;
+            }
         }
     }
 };
@@ -175,28 +193,30 @@ public:
 
 int main (int argc, char *argv[]) {
         if (argc < 3) {
-            std::cerr << "Usage: " << argv[0] << " host port" << std::endl << std::endl;
+            cerr << "Usage: " << argv[0] << " host port" << endl << endl;
             return -1;
         }
-        std::string host = argv[1];
+        string host = argv[1];
         short port = atoi(argv[2]);
 
         ConnectionHandler connectionHandler(host, port);
         if (!connectionHandler.connect()) {
-            std::cerr << "Cannot connect to " << host << ":" << port << std::endl;
+            cerr << "Cannot connect to " << host << ":" << port << endl;
             return 1;
         }
+
 
         KeyboardReader keyboardReader(connectionHandler);
         SocketReader socketReader(connectionHandler);
 
+
         thread keyboardListener(&KeyboardReader::run,keyboardReader);
         thread socketListener(&SocketReader::run,socketReader);
 
+
+
         keyboardListener.join();
         socketListener.join();
-
         connectionHandler.close();
-
-
-    }
+        return 0;
+}
