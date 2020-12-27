@@ -3,6 +3,7 @@
 //
 
 #include "../include/connectionHandler.h"
+#include <pthread.h>
 #include <stdlib.h>
 #include <mutex>
 
@@ -212,7 +213,6 @@ int main (int argc, char *argv[]) {
 
         thread keyboardListener(&KeyboardReader::run,keyboardReader);
         thread socketListener(&SocketReader::run,socketReader);
-
 
 
         keyboardListener.join();

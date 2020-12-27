@@ -1,7 +1,7 @@
 #include <connectionHandler.h>
  
 using boost::asio::ip::tcp;
-
+#include "boost/asio/ip/tcp.hpp"
 using std::cin;
 using std::cout;
 using std::cerr;
@@ -136,7 +136,7 @@ void ConnectionHandler::analyse(vector<string*> commandline, string line){
 }
 
 void ConnectionHandler::relax (char * charArray, const string * str){
-    for (int i = 0; i < str->length() ; ++i) {
+    for (unsigned i = 0; i < str->length() ; ++i) {
         charArray[i] = str->at(i);
     }
 }
