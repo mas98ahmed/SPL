@@ -25,4 +25,9 @@ public class COURSEREG extends Message {
     public boolean isACK() {
         return false;
     }
+
+    @Override
+    public byte[] encode() {
+        return null;
+    }
 }
