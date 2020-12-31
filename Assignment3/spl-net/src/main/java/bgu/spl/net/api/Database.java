@@ -48,14 +48,15 @@ public class Database {
 				String[] line = data.split("\\|");
 				int courseNum = Integer.parseInt(line[0]);
 				String courseName = line[1];
-				String[] kdamcourses = line[2].substring(1).split(",");
+				String[] kdamcourses = line[2].substring(1,line[2].length() - 1).split(",");
 				List<Integer> kdamnums = new ArrayList<>();
-				for(String s : kdamcourses){
-					kdamnums.add(Integer.valueOf(s));
+				if(kdamcourses.length > 0 && !line[2].equals("[]")){
+					for(String s : kdamcourses){
+						kdamnums.add(Integer.valueOf(s));
+					}
 				}
 				int maxStudentNum = Integer.parseInt(line[3]);
 				courses.putIfAbsent(courseNum,new Course(courseNum,courseName,kdamnums,maxStudentNum));
-				System.out.println(data);
 			}
 			myReader.close();
 		} catch (FileNotFoundException e) {
