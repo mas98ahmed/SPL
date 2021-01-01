@@ -30,7 +30,7 @@ public class ACK extends Message {
     }
 
     @Override
-    public byte[] encode() {
+    public byte[]   encode() {
         byte[] OpcodeInBytes = this.shortToBytes(Opcode);
         byte[] MessageOpInBytes = this.shortToBytes(MessageOp);
         byte[] output = new byte[OpcodeInBytes.length + MessageOpInBytes.length + 1];

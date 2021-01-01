@@ -27,8 +27,10 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                     zeroByteNum++;
                 }
                 if(zeroByteNum == 2){
-                    String username = DecodeIntoString(bytes.subList(2, bytes.indexOf(0)));
-                    String password = DecodeIntoString(bytes.subList(bytes.indexOf(0) + 1, bytes.size() - 1));
+                    int first_zero = indexof(bytes.subList(2, bytes.size()), (byte) 0);
+                    int second_zero = indexof(bytes.subList(first_zero + 3, bytes.size()), (byte) 0);
+                    String username = DecodeIntoString(bytes.subList(3, 2 + first_zero));
+                    String password = DecodeIntoString(bytes.subList(3 + first_zero, 3 + first_zero + second_zero));
                     if (Opcode == 1) {
                         return new ADMINREG(username, password);
                     }
@@ -87,7 +89,8 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                     zeroByteNum++;
                 }
                 if(zeroByteNum == 1){
-                    String username = DecodeIntoString(bytes.subList(2, bytes.indexOf(0)));
+                    int zero = indexof(bytes.subList(2, bytes.size()), (byte) 0);
+                    String username = DecodeIntoString(bytes.subList(3, 2 + zero));
                     bytes.clear();
                     zeroByteNum = 0;
                     Opcode = 0;
@@ -111,9 +114,17 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
 
     private String DecodeIntoString(List<Byte> lst){
         byte[] str = new byte[lst.size()];
-        for (int i = 0; i < lst.size(); i++){
+        for (int i = 0; i < lst.size(); i++)
             str[i] = lst.get(i);
-        }
+        System.out.println("decoding: "+ new String(str,StandardCharsets.UTF_8));
         return new String(str, StandardCharsets.UTF_8);
+    }
+
+    private int indexof(List<Byte> byt, byte b){
+        for (int i = 0; i < byt.size(); i++) {
+            if(byt.get(i) == b)
+                return i;
+        }
+        return -1;
     }
 }
