@@ -58,42 +58,41 @@ public:
             getline(cin,line);
             vector<string> commandline = analyse(line);
             if (commandline[0] == "ADMINREG"){
-                
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(1, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 connectionHandler->sendFrameAscii(commandline[1],'\0');
                 connectionHandler->sendFrameAscii(commandline[2],'\0');
                 free(opcode);
             }
             else if (commandline[0] == "STUDENTREG"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(2, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 connectionHandler->sendFrameAscii(commandline[1],'\0');
                 connectionHandler->sendFrameAscii(commandline[2],'\0');
                 free(opcode);
             }
             else if (commandline[0] == "LOGIN"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(3, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 connectionHandler->sendFrameAscii(commandline[1],'\0');
                 connectionHandler->sendFrameAscii(commandline[2],'\0');
                 free(opcode);
             }
             else if (commandline[0] == "LOGOUT"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(4, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
+                connected = false;
                 free(opcode);
             }
             else if (commandline[0] == "COURSEREG"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(5, opcode);
                 connectionHandler->sendBytes(opcode, 2);
@@ -105,9 +104,9 @@ public:
                 free(courseNumber);
             }
             else if (commandline[0] == "KDAMCHECK"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(6, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
                 char command[commandline[1].length()];
@@ -115,12 +114,11 @@ public:
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
-
             }
             else if (commandline[0] == "COURSESTAT"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(7, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
                 char command[commandline[1].length()];
@@ -130,17 +128,17 @@ public:
                 free(courseNumber);
             }
             else if (commandline[0] == "STUDENTSTAT"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(8, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode,2);
                 connectionHandler->sendFrameAscii(commandline[1],'\0');
                 free(opcode);
             }
             else if (commandline[0] == "ISREGISTERED"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(9, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
                 char command[commandline[1].length()];
@@ -150,9 +148,9 @@ public:
                 free(courseNumber);
             }
             else if (commandline[0] == "UNREGISTER"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(10, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
                 char command[commandline[1].length()];
@@ -162,9 +160,9 @@ public:
                 free(courseNumber);
             }
             else if (commandline[0] == "MYCOURSES"){
-                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(11, opcode);
+                _mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
                 char command[commandline[1].length()];
@@ -174,13 +172,11 @@ public:
                 free(courseNumber);
             }
             else{
+                _mutex.lock();
                 cout<< "Damn wrong message detected" <<endl;
-                }
+            }
+            _mutex.unlock();
         }
-
-
-
-
     }
 
 };
@@ -195,18 +191,16 @@ public:
     void run() {
         while (connected) {
             cout<<"listen"<<endl;
-            char * replyBytes[4];
-            connectionHandler->getBytes(*replyBytes,4);
-            char * opcodeAsBytes[] = {replyBytes[0], replyBytes[1]};
-            char * messageOpcodeAsBytes[] = {replyBytes[2],replyBytes[3]};
-
-            short opcode = bytesToShort(*opcodeAsBytes);
-            short messageOpcode = bytesToShort(*messageOpcodeAsBytes);
-
+            char replyBytes[4];
+            connectionHandler->getBytes(replyBytes,4);
+            char opcodeAsBytes[] = {replyBytes[0], replyBytes[1]};
+            char messageOpcodeAsBytes[] = {replyBytes[2],replyBytes[3]};
+            short opcode = bytesToShort(opcodeAsBytes);
+            short messageOpcode = bytesToShort(messageOpcodeAsBytes);
 
             if (opcode == 12){
-                lock_guard<mutex> lock(_mutex);
                 string optionalPart;
+                _mutex.lock();
                 connectionHandler->getFrameAscii(optionalPart,'\0');
                 optionalPart = optionalPart.substr(0,optionalPart.length()-1); // it may be -2 to remove null character, will see during testing...
                 string space = " ";
@@ -214,13 +208,14 @@ public:
                 cout<< "ACK " << messageOpcode << optionalPart << endl;
             }
             else if (opcode == 13){
-                lock_guard<mutex> lock(_mutex);
+                _mutex.lock();
                 cout<<"ERROR " << messageOpcode << endl;
             }
             else{
+                _mutex.lock();
                 cout<< "Damn wrong message detected" <<endl;
-                break;
             }
+            _mutex.unlock();
         }
     }
 };
@@ -238,7 +233,7 @@ int main (int argc, char *argv[]) {
         ConnectionHandler connectionHandler(host, port);
         if (!connectionHandler.connect()) {
             cerr << "Cannot connect to " << host << ":" << port << endl;
-            return 1;
+            return -1;
         }
 
 
@@ -249,9 +244,9 @@ int main (int argc, char *argv[]) {
         thread keyboardListener(&KeyboardReader::run,keyboardReader);
         thread socketListener(&SocketReader::run,socketReader);
 
-
         keyboardListener.join();
         socketListener.join();
+        
         connectionHandler.close();
         return 0;
 }
