@@ -54,16 +54,15 @@ public:
     KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
         while (connected){
-            lock_guard<mutex> lockGuard(send_mutex);
             send_mutex.lock();
             cout<<"Enter command:"<<endl;
             string line;
             getline(cin,line);
             vector<string> commandline = analyse(line);
             if (commandline[0] == "ADMINREG"){
+                cout<<"admin"<<endl;
                 char  * opcode = (char *)(malloc(2));
                 shortToBytes(1, opcode);
-                //_mutex.lock();
                 connectionHandler->sendBytes(opcode, 2);
                 connectionHandler->sendFrameAscii(commandline[1],'\0');
                 connectionHandler->sendFrameAscii(commandline[2],'\0');
@@ -205,7 +204,7 @@ public:
     SocketReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
         while (connected) {
-            lock_guard<mutex> lockGuard(receive_mutex);
+            //lock_guard<mutex> lockGuard(receive_mutex);
             receive_mutex.lock();
             cout<<"listen"<<endl;
             char replyBytes[4];
@@ -260,7 +259,7 @@ int main (int argc, char *argv[]) {
         KeyboardReader keyboardReader(connectionHandler);
         SocketReader socketReader(connectionHandler);
 
-
+        receive_mutex.lock();
         thread keyboardListener(&KeyboardReader::run,keyboardReader);
         thread socketListener(&SocketReader::run,socketReader);
 
