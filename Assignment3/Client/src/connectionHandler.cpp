@@ -110,33 +110,3 @@ void ConnectionHandler::close() {
         std::cout << "closing failed: connection already closed" << std::endl;
     }
 }
-
-short ConnectionHandler::bytesToShort(char* bytesArr)
-{
-    short result = (short)((bytesArr[0] & 0xff) << 8);
-    result += (short)(bytesArr[1] & 0xff);
-    return result;
-}
-
-void ConnectionHandler::shortToBytes(short num, char* bytesArr)
-{
-    bytesArr[0] = ((num >> 8) & 0xFF);
-    bytesArr[1] = (num & 0xFF);
-}
-
-void ConnectionHandler::analyse(vector<string*> commandline, string line){
-    // I have to handle edge cases here.
-    string temp = line;
-    string delimiter = " ";
-    while (temp.length() > 0){
-        string token = temp.substr(0,temp.find(delimiter));
-        temp = temp.substr(temp.find(delimiter));
-        commandline.push_back(&token);
-    }
-}
-
-void ConnectionHandler::relax (char * charArray, const string * str){
-    for (unsigned i = 0; i < str->length() ; ++i) {
-        charArray[i] = str->at(i);
-    }
-}

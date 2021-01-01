@@ -1,7 +1,3 @@
-//
-// Created by zoix on 23/12/2020.
-//
-
 #include "../include/connectionHandler.h"
 #include <pthread.h>
 #include <stdlib.h>
@@ -11,6 +7,43 @@ using namespace std;
 bool connected = true;
 mutex _mutex;
 
+vector<string> analyse(string &line){
+    vector<string> commandline;
+    // I have to handle edge cases here.
+    string temp;
+    char delimiter = ' ';
+    long Size = line.length();
+    for(int i = 0; i < Size; i++){
+        if(line[i] == delimiter){
+            commandline.push_back(temp);
+            temp.clear();
+        }else{
+            temp.push_back(line[i]);
+        }
+    }
+    commandline.push_back(temp);
+    return commandline;
+}
+
+short bytesToShort(char* bytesArr)
+{
+    short result = (short)((bytesArr[0] & 0xff) << 8);
+    result += (short)(bytesArr[1] & 0xff);
+    return result;
+}
+
+void shortToBytes(short num, char* bytesArr)
+{
+    bytesArr[0] = ((num >> 8) & 0xFF);
+    bytesArr[1] = (num & 0xFF);
+}
+
+void relax (char* charArray, const string str){
+    for (unsigned i = 0; i < str.length() ; ++i) {
+        charArray[i] = str[i];
+    }
+}
+
 
 class KeyboardReader{
 
@@ -19,129 +52,130 @@ private:
 public:
     KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
-
         while (connected){
-
-            lock_guard<mutex> lock(_mutex);
-
-            const short bufsize = 1024;
-            char buf[bufsize];
-            cin.getline(buf,bufsize);
-            string line(buf);
-            vector<string*> commandline;
-            connectionHandler->analyse(commandline,line);
-
-
-
-            if (*commandline[0] == "ADMINREG"){
+            cout<<"Enter command:"<<endl;
+            string line;
+            getline(cin,line);
+            vector<string> commandline = analyse(line);
+            if (commandline[0] == "ADMINREG"){
+                
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(1, opcode);
+                shortToBytes(1, opcode);
                 connectionHandler->sendBytes(opcode, 2);
-                connectionHandler->sendFrameAscii(*commandline[1],'\0');
-                connectionHandler->sendFrameAscii(*commandline[2],'\0');
+                connectionHandler->sendFrameAscii(commandline[1],'\0');
+                connectionHandler->sendFrameAscii(commandline[2],'\0');
                 free(opcode);
             }
-            else if (*commandline[0] == "STUDENTREG"){
+            else if (commandline[0] == "STUDENTREG"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(2, opcode);
+                shortToBytes(2, opcode);
                 connectionHandler->sendBytes(opcode, 2);
-                connectionHandler->sendFrameAscii(*commandline[1],'\0');
-                connectionHandler->sendFrameAscii(*commandline[2],'\0');
+                connectionHandler->sendFrameAscii(commandline[1],'\0');
+                connectionHandler->sendFrameAscii(commandline[2],'\0');
                 free(opcode);
             }
-            else if (*commandline[0] == "LOGIN"){
+            else if (commandline[0] == "LOGIN"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(3, opcode);
+                shortToBytes(3, opcode);
                 connectionHandler->sendBytes(opcode, 2);
-                connectionHandler->sendFrameAscii(*commandline[1],'\0');
-                connectionHandler->sendFrameAscii(*commandline[2],'\0');
+                connectionHandler->sendFrameAscii(commandline[1],'\0');
+                connectionHandler->sendFrameAscii(commandline[2],'\0');
                 free(opcode);
             }
-            else if (*commandline[0] == "LOGOUT"){
+            else if (commandline[0] == "LOGOUT"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(4, opcode);
+                shortToBytes(4, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 free(opcode);
             }
-            else if (*commandline[0] == "COURSEREG"){
+            else if (commandline[0] == "COURSEREG"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(5, opcode);
+                shortToBytes(5, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
-                char command[commandline[1]->length()];
-                connectionHandler->relax(command,commandline[1]);
+                char command[commandline[1].length()];
+                relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
             }
-            else if (*commandline[0] == "KDAMCHECK"){
+            else if (commandline[0] == "KDAMCHECK"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(6, opcode);
+                shortToBytes(6, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
-                char command[commandline[1]->length()];
-                connectionHandler->relax(command,commandline[1]);
+                char command[commandline[1].length()];
+                relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
 
             }
-            else if (*commandline[0] == "COURSESTAT"){char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(7, opcode);
+            else if (commandline[0] == "COURSESTAT"){
+                lock_guard<mutex> lock(_mutex);
+                char  * opcode = (char *)(malloc(2));
+                shortToBytes(7, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
-                char command[commandline[1]->length()];
-                connectionHandler->relax(command,commandline[1]);
+                char command[commandline[1].length()];
+                relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
             }
-            else if (*commandline[0] == "STUDENTSTAT"){
+            else if (commandline[0] == "STUDENTSTAT"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(8, opcode);
+                shortToBytes(8, opcode);
                 connectionHandler->sendBytes(opcode,2);
-                connectionHandler->sendFrameAscii(*commandline[1],'\0');
+                connectionHandler->sendFrameAscii(commandline[1],'\0');
                 free(opcode);
             }
-            else if (*commandline[0] == "ISREGISTERED"){
+            else if (commandline[0] == "ISREGISTERED"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(9, opcode);
+                shortToBytes(9, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
-                char command[commandline[1]->length()];
-                connectionHandler->relax(command,commandline[1]);
+                char command[commandline[1].length()];
+                relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
             }
-            else if (*commandline[0] == "UNREGISTER"){
+            else if (commandline[0] == "UNREGISTER"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(10, opcode);
+                shortToBytes(10, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
-                char command[commandline[1]->length()];
-                connectionHandler->relax(command,commandline[1]);
+                char command[commandline[1].length()];
+                relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
             }
-            else if (*commandline[0] == "MYCOURSES"){
+            else if (commandline[0] == "MYCOURSES"){
+                lock_guard<mutex> lock(_mutex);
                 char  * opcode = (char *)(malloc(2));
-                connectionHandler->shortToBytes(11, opcode);
+                shortToBytes(11, opcode);
                 connectionHandler->sendBytes(opcode, 2);
                 short * courseNumber = (short *)malloc( 2);
-                char command[commandline[1]->length()];
-                connectionHandler->relax(command,commandline[1]);
+                char command[commandline[1].length()];
+                relax(command,commandline[1]);
                 connectionHandler->sendBytes(command,2);
                 free(opcode);
                 free(courseNumber);
             }
-
             else{
                 cout<< "Damn wrong message detected" <<endl;
-                break;
                 }
-
         }
 
 
@@ -160,18 +194,18 @@ public:
     SocketReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
         while (connected) {
-        lock_guard<mutex> lock(_mutex);
-
+            cout<<"listen"<<endl;
             char * replyBytes[4];
             connectionHandler->getBytes(*replyBytes,4);
             char * opcodeAsBytes[] = {replyBytes[0], replyBytes[1]};
             char * messageOpcodeAsBytes[] = {replyBytes[2],replyBytes[3]};
 
-            short opcode = connectionHandler->bytesToShort(*opcodeAsBytes);
-            short messageOpcode = connectionHandler->bytesToShort(*messageOpcodeAsBytes);
+            short opcode = bytesToShort(*opcodeAsBytes);
+            short messageOpcode = bytesToShort(*messageOpcodeAsBytes);
 
 
             if (opcode == 12){
+                lock_guard<mutex> lock(_mutex);
                 string optionalPart;
                 connectionHandler->getFrameAscii(optionalPart,'\0');
                 optionalPart = optionalPart.substr(0,optionalPart.length()-1); // it may be -2 to remove null character, will see during testing...
@@ -180,6 +214,7 @@ public:
                 cout<< "ACK " << messageOpcode << optionalPart << endl;
             }
             else if (opcode == 13){
+                lock_guard<mutex> lock(_mutex);
                 cout<<"ERROR " << messageOpcode << endl;
             }
             else{
