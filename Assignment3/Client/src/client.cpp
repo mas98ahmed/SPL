@@ -22,7 +22,7 @@ vector<string> analyse(string &line){
             temp.push_back(line[i]);
         }
     }
-    commandline.push_back(temp);
+    //commandline.push_back(temp);  // I guess here was the bug!
     return commandline;
 }
 
