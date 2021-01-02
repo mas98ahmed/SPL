@@ -198,12 +198,14 @@ public:
             short messageOpcode = bytesToShort(messageOpcodeAsBytes);
 
             if (opcode == 12){
-                string optionalPart;
-                connectionHandler->getFrameAscii(optionalPart,'\0');
-                optionalPart = optionalPart.substr(0,optionalPart.length()-1); // it may be -2 to remove null character, will see during testing...
-                string space = " ";
-                optionalPart = space.append(optionalPart);
-                cout<< "ACK " << messageOpcode << optionalPart << endl;
+                //optionalPart = optionalPart.substr(0,optionalPart.length()-1); // it may be -2 to remove null character, will see during testing...
+                //string space = " ";
+                //optionalPart = space.append(optionalPart);
+                cout << "ACK " << messageOpcode << endl;
+                string optionalPart = "";
+                if(connectionHandler->getFrameAscii(optionalPart,'\0')){
+                    cout << optionalPart << endl;
+                }
                 if(messageOpcode == 4){
                     connected = false;
                 }
@@ -211,11 +213,11 @@ public:
             }
             else if (opcode == 13){
 
-                cout<<"ERROR " << messageOpcode << endl;
+                cout << "ERROR " << messageOpcode << endl;
                 send_mutex.unlock();
             }
             else{
-                cout<< "Damn wrong message detected" <<endl;
+                cout << "Damn wrong message detected" <<endl;
                 break;
             }
         }
