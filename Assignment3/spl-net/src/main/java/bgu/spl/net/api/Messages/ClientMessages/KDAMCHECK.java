@@ -8,19 +8,16 @@ import bgu.spl.net.api.Users.User;
 public class KDAMCHECK extends Message {
     private short courseNum;
 
-    public KDAMCHECK(short courseNum){
+    public KDAMCHECK(short courseNum) {
         super(Short.parseShort("6"));
         this.courseNum = courseNum;
     }
 
     @Override
     public Message process(User activeuser) {
-        if(!activeuser.isAdmin()){
-            ACK ack = new ACK(Short.parseShort("6"));
-            ack.setMessage(db.getKdamCourses(courseNum));
-            return ack;
-        }
-        return new Error(Short.parseShort("6"));
+        ACK ack = new ACK(Short.parseShort("6"));
+        ack.setMessage(db.getKdamCourses(courseNum));
+        return ack;
     }
 
     @Override

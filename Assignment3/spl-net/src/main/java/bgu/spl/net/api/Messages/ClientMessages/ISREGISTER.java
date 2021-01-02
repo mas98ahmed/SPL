@@ -15,7 +15,7 @@ public class ISREGISTER extends Message {
     @Override
     public Message process(User activeuser){
         ACK ack = new ACK(Short.parseShort("9"));
-        ack.setMessage(activeuser.getCourses().contains(courseNum)? "REGISTERED" : "NOT REGISTERED");
+        ack.setMessage(activeuser.getCourses().contains(db.getCourse(courseNum))? "REGISTERED" : "NOT REGISTERED");
         return ack;
     }
 

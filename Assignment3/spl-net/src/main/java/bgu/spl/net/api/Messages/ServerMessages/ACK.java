@@ -35,7 +35,7 @@ public class ACK extends Message {
         byte[] MessageOpInBytes = this.shortToBytes(MessageOp);
         byte[] output = new byte[OpcodeInBytes.length + MessageOpInBytes.length + 1];
         byte[] messageInBytes;
-        if (Opcode == 7 || Opcode == 8 || Opcode == 9 || Opcode == 11) {
+        if (MessageOp == 6 || MessageOp == 7 || MessageOp == 8 || MessageOp == 9 || MessageOp == 11) {
             messageInBytes = message.getBytes();
             output = new byte[OpcodeInBytes.length + MessageOpInBytes.length + messageInBytes.length + 1];
             for (int j = 0; j < messageInBytes.length; j++)

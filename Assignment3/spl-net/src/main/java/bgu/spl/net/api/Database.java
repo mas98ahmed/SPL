@@ -77,6 +77,9 @@ public class Database {
 		return false;
 	}
 
+	public Course getCourse(Short courseNum){
+		return courses.get(courseNum);
+	}
 
 	public boolean Login(String username, String password) {
 		if(users.containsKey(username)){
