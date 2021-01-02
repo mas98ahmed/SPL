@@ -4,10 +4,9 @@
 #include <mutex>
 
 using namespace std;
-bool connected = true;
 mutex send_mutex;
 mutex receive_mutex;
-
+atomic<bool> connected = true;
 vector<string> analyse(string &line){
     vector<string> commandline;
     // I have to handle edge cases here.
@@ -22,7 +21,7 @@ vector<string> analyse(string &line){
             temp.push_back(line[i]);
         }
     }
-    commandline.push_back(temp);
+    //commandline.push_back(temp);  // I guess here was the bug!
     return commandline;
 }
 
@@ -53,7 +52,7 @@ private:
 public:
     KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
-        while (connected){
+        while (connected){  // I should add the response after the reply on my message!
             send_mutex.lock();
             if(connected == false){
                 break;
