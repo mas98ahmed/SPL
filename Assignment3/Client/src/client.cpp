@@ -4,7 +4,6 @@
 #include <mutex>
 
 using namespace std;
-bool connected = true;
 mutex send_mutex;
 mutex receive_mutex;
 
@@ -53,7 +52,7 @@ private:
 public:
     KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
-        while (connected){
+        while (!connectionHandler.connect()){
             send_mutex.lock();
             cout<<"Enter command:"<<endl;
             string line;
@@ -203,7 +202,7 @@ private:
 public:
     SocketReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
-        while (connected) {
+        while (!connectionHandler.connect()) {
             //lock_guard<mutex> lockGuard(receive_mutex);
             receive_mutex.lock();
             cout<<"listen"<<endl;
