@@ -14,7 +14,7 @@ public class MessagingProtocolImpl implements MessagingProtocol<Message> {
         if(msg.getOpcode() == 3 || msg.getOpcode() == 1 || msg.getOpcode() == 2 || activeuser != null) {
             message = msg.process(activeuser);
             if (msg.getOpcode() == 3 && message.isACK())
-                activeuser = message.getActiveUser();
+                activeuser = msg.getActiveUser();
             if (msg.getOpcode() == 4 && message.isACK()) {
                 activeuser = null;
                 terminate = true;

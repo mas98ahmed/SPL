@@ -24,6 +24,7 @@ public abstract class User {
 
     public void RegisterCourse(Course course){
         courses.add(course);
+        System.out.println(course.getCourseNum());
     }
 
     public List<Course> getCourses() {
@@ -35,7 +36,7 @@ public abstract class User {
     @Override
     public String toString() {
         String output = "Student: " + username + "\n";
-        List<Integer> nums = new ArrayList<>();
+        List<Short> nums = new ArrayList<>();
         for (Course course : courses) {
             nums.add(course.getCourseNum());
         }

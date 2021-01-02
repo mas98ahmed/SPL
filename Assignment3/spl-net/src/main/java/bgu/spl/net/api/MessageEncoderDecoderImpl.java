@@ -3,6 +3,7 @@ package bgu.spl.net.api;
 import bgu.spl.net.api.Messages.ClientMessages.*;
 import bgu.spl.net.api.Messages.Message;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -31,57 +32,66 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                     int second_zero = indexof(bytes.subList(first_zero + 3, bytes.size()), (byte) 0);
                     String username = DecodeIntoString(bytes.subList(3, 2 + first_zero));
                     String password = DecodeIntoString(bytes.subList(3 + first_zero, 3 + first_zero + second_zero));
+                    System.out.println("username: " + username);
+                    System.out.println("password: " + password);
+                    bytes = new LinkedList<>();
+                    zeroByteNum = 0;
                     if (Opcode == 1) {
+                        Opcode = 0;
                         return new ADMINREG(username, password);
                     }
                     if (Opcode == 2) {
+                        Opcode = 0;
                         return new STUDENTREG(username, password);
                     }
                     if (Opcode == 3) {
+                        Opcode = 0;
                         return new LOGIN(username, password);
                     }
-                    bytes.clear();
-                    zeroByteNum = 0;
-                    Opcode = 0;
                 }
             }
             if (Opcode == 4 || Opcode == 11) {
                 if (Opcode == 4) {
                     Opcode = 0;
-                    bytes.clear();
+                    bytes = new LinkedList<>();
                     return new LOGOUT();
                 } else {
                     Opcode = 0;
-                    bytes.clear();
+                    bytes = new LinkedList<>();
                     return new MYCOURSES();
                 }
             }
             if (Opcode == 5 || Opcode == 6 || Opcode == 7 || Opcode == 9 || Opcode == 10) {
                 bytes.add(nextByte);
-                if(nextByte == 0){
-                    zeroByteNum++;
+                if(bytes.size() == 5) {
+                    byte[] courseNum = new byte[2];
+                    courseNum[0] = bytes.get(3);
+                    courseNum[1] = bytes.get(4);
+                    short course = bytesToShort(courseNum);
+                    System.out.println("bytes decode: " + bytes);
+                    System.out.println("course decode: " + course);
+                    bytes = new LinkedList<>();
+                    if (Opcode == 5) {
+                        Opcode = 0;
+                        return new COURSEREG(course);
+                    }
+                    if (Opcode == 6) {
+                        Opcode = 0;
+                        return new KDAMCHECK(course);
+                    }
+                    if (Opcode == 7) {
+                        Opcode = 0;
+                        return new COURSESTAT(course);
+                    }
+                    if (Opcode == 9) {
+                        Opcode = 0;
+                        return new ISREGISTER(course);
+                    }
+                    if (Opcode == 10) {
+                        Opcode = 0;
+                        return new UNREGISTER(course);
+                    }
                 }
-                byte[] courseNum = new byte[2];
-                courseNum[0] = bytes.get(2);
-                courseNum[1] = bytes.get(3);
-                short course = bytesToShort(courseNum);
-                if (Opcode == 5) {
-                    return new COURSEREG(course);
-                }
-                if (Opcode == 6) {
-                    return new KDAMCHECK(course);
-                }
-                if (Opcode == 7) {
-                    return new COURSESTAT(course);
-                }
-                if (Opcode == 9) {
-                    return new ISREGISTER(course);
-                }
-                if ( Opcode == 10){
-                    return new UNREGISTER(course);
-                }
-                bytes.clear();
-                Opcode = 0;
             }
             if (Opcode == 8) {
                 bytes.add(nextByte);
@@ -91,7 +101,7 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                 if(zeroByteNum == 1){
                     int zero = indexof(bytes.subList(2, bytes.size()), (byte) 0);
                     String username = DecodeIntoString(bytes.subList(3, 2 + zero));
-                    bytes.clear();
+                    bytes = new LinkedList<>();
                     zeroByteNum = 0;
                     Opcode = 0;
                     return new STUDENTSTAT(username);
@@ -116,7 +126,6 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
         byte[] str = new byte[lst.size()];
         for (int i = 0; i < lst.size(); i++)
             str[i] = lst.get(i);
-        System.out.println("decoding: "+ new String(str,StandardCharsets.UTF_8));
         return new String(str, StandardCharsets.UTF_8);
     }
 

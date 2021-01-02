@@ -5,9 +5,9 @@ import bgu.spl.net.api.Messages.ServerMessages.ACK;
 import bgu.spl.net.api.Users.User;
 
 public class ISREGISTER extends Message {
-    private int courseNum;
+    private short courseNum;
 
-    public ISREGISTER(int courseNum){
+    public ISREGISTER(short courseNum){
         super(Short.parseShort("9"));
         this.courseNum = courseNum;
     }

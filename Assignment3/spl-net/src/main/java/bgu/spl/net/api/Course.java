@@ -6,14 +6,14 @@ import bgu.spl.net.api.Users.User;
 import java.util.*;
 
 public class Course {
-    private int courseNum;
+    private short courseNum;
     private String courseName;
-    private List<Integer> KdamCoursesList;
+    private List<Short> KdamCoursesList;
     private int numOfMaxStudents;
     private List<User> RegisterStudents;
 
-    public Course(int courseNum, String courseName,
-                  List<Integer> KdamCoursesList, int numOfMaxStudents){
+    public Course(short courseNum, String courseName,
+                  List<Short> KdamCoursesList, int numOfMaxStudents){
         this.courseNum = courseNum;
         this.courseName = courseName;
         this.KdamCoursesList = KdamCoursesList;
@@ -21,7 +21,7 @@ public class Course {
         this.RegisterStudents = new ArrayList<>();
     }
 
-    public int getCourseNum() {
+    public short getCourseNum() {
         return courseNum;
     }
 
@@ -29,7 +29,7 @@ public class Course {
         return numOfMaxStudents;
     }
 
-    public List<Integer> getKdamCoursesList() {
+    public List<Short> getKdamCoursesList() {
         return KdamCoursesList;
     }
 
@@ -39,9 +39,15 @@ public class Course {
 
     public synchronized boolean RegisterStudent(User user){
         boolean kdam_courses = true;
-        for (Course course : user.getCourses()){
-            if (!KdamCoursesList.contains(course.courseNum)) {
+        List<Course> student_courses = user.getCourses();
+        List<Short> student_courses_num = new LinkedList<>();
+        for (Course course : student_courses) {
+            student_courses_num.add(course.getCourseNum());
+        }
+        for (short course : KdamCoursesList){
+            if (!student_courses_num.contains(course)) {
                 kdam_courses = false;
+                break;
             }
         }
         if(RegisterStudents.size() < numOfMaxStudents && kdam_courses) {
@@ -66,5 +72,9 @@ public class Course {
         Collections.sort(names);
         output += "Students Registered: " + names.toString();
         return output;
+    }
+
+    public void Unregister(User user) {
+        RegisterStudents.remove(user);
     }
 }

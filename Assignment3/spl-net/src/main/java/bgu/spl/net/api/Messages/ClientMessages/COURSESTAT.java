@@ -6,9 +6,9 @@ import bgu.spl.net.api.Messages.ServerMessages.Error;
 import bgu.spl.net.api.Users.User;
 
 public class COURSESTAT extends Message {
-    private int courseNum;
+    private short courseNum;
 
-    public COURSESTAT(int courseNum){
+    public COURSESTAT(short courseNum){
         super(Short.parseShort("7"));
         this.courseNum = courseNum;
     }

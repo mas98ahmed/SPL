@@ -6,9 +6,9 @@ import bgu.spl.net.api.Messages.ServerMessages.Error;
 import bgu.spl.net.api.Users.User;
 
 public class UNREGISTER extends Message {
-    private int courseNum;
+    private short courseNum;
 
-    public UNREGISTER(int courseNum){
+    public UNREGISTER(short courseNum){
         super(Short.parseShort("10"));
         this.courseNum = courseNum;
     }

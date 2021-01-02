@@ -17,8 +17,8 @@ public class LOGIN extends Message {
 
     @Override
     public Message process(User activeuser) {
-        if(!db.Login(username, password)) {
-            if (activeUser != db.getUser(username)){
+        if(db.Login(username, password)) {
+            if (activeuser == null){
                 activeUser = db.getUser(username);
                 return new ACK(Short.parseShort("3"));
             }

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Database {
 	private static Database singleton = null;
-	private final ConcurrentHashMap<Integer, Course> courses = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Short, Course> courses = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 
 	//to prevent user from creating new Database
@@ -46,17 +46,17 @@ public class Database {
 			while (myReader.hasNextLine()) {
 				String data = myReader.nextLine();
 				String[] line = data.split("\\|");
-				int courseNum = Integer.parseInt(line[0]);
+				short courseNum = Short.parseShort(line[0]);
 				String courseName = line[1];
 				String[] kdamcourses = line[2].substring(1,line[2].length() - 1).split(",");
-				List<Integer> kdamnums = new ArrayList<>();
+				List<Short> kdamnums = new ArrayList<>();
 				if(kdamcourses.length > 0 && !line[2].equals("[]")){
 					for(String s : kdamcourses){
-						kdamnums.add(Integer.valueOf(s));
+						kdamnums.add(Short.valueOf(s));
 					}
 				}
 				int maxStudentNum = Integer.parseInt(line[3]);
-				courses.putIfAbsent(courseNum,new Course(courseNum,courseName,kdamnums,maxStudentNum));
+				courses.put(courseNum,new Course(courseNum,courseName,kdamnums,maxStudentNum));
 			}
 			myReader.close();
 		} catch (FileNotFoundException e) {
@@ -80,35 +80,38 @@ public class Database {
 
 	public boolean Login(String username, String password) {
 		if(users.containsKey(username)){
-			if(users.get(username).getPassword() == password){
-				return true;
-			}
+			return users.get(username).getPassword().equals(password);
 		}
 		return false;
 	}
 
-	public boolean CourseRegister(User activeUser, int courseNum) {
+	public boolean CourseRegister(User activeUser, short courseNum) {
 		Course course = courses.get(courseNum);
-		boolean output = course.RegisterStudent(activeUser);
-		if(output)
-			activeUser.RegisterCourse(course);
+		boolean output = false;
+		if(courses.containsKey(courseNum)) {
+			output = course.RegisterStudent(activeUser);
+			if (output)
+				activeUser.RegisterCourse(course);
+		}
 		return output;
 	}
 
-	public String getKdamCourses(int courseNum) {
+	public String getKdamCourses(short courseNum) {
 		Course course = courses.get(courseNum);
 		return course.getKdamCoursesList().toString();
 	}
 
-	public boolean Unregister(User activeuser, int courseNum) {
-		if(activeuser.getCourses().contains(courseNum)) {
-			activeuser.getCourses().remove(courseNum);
+	public boolean Unregister(User activeuser, short courseNum) {
+		if(activeuser.getCourses().contains(courses.get(courseNum))) {
+			System.out.println("unregistered: " + courseNum);
+			activeuser.getCourses().remove(courses.get(courseNum));
+			courses.get(courseNum).Unregister(activeuser);
 			return true;
 		}
 		return false;
 	}
 
-	public String CourseStat(int courseNum) {
+	public String CourseStat(short courseNum) {
 		Course course = courses.get(courseNum);
 		return course.toString();
 	}
