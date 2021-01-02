@@ -6,7 +6,7 @@
 using namespace std;
 mutex send_mutex;
 mutex receive_mutex;
-
+atomic<bool> connected = true;
 vector<string> analyse(string &line){
     vector<string> commandline;
     // I have to handle edge cases here.
@@ -52,7 +52,7 @@ private:
 public:
     KeyboardReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
-        while (!connectionHandler.connect()){
+        while (connected){  // I should add the response after the reply on my message!
             send_mutex.lock();
             cout<<"Enter command:"<<endl;
             string line;
@@ -202,7 +202,7 @@ private:
 public:
     SocketReader(ConnectionHandler &connectionHandler) : connectionHandler(&connectionHandler){}
     void run() {
-        while (!connectionHandler.connect()) {
+        while (connected) {
             //lock_guard<mutex> lockGuard(receive_mutex);
             receive_mutex.lock();
             cout<<"listen"<<endl;
