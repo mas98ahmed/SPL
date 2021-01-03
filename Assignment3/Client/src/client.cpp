@@ -173,6 +173,7 @@ public:
             }
             else{
                 cout<< "Damn wrong message detected" <<endl;
+                break;
             }
         }
     }
