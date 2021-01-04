@@ -19,7 +19,7 @@ public class STUDENTSTAT extends Message {
 
     @Override
     public Message process(User activeuser) {
-        if (activeuser.isAdmin()){
+        if (activeuser.isAdmin() && !db.getUser(username).isAdmin()){
             ACK ack = new ACK(Short.parseShort("8"));
             ack.setMessage(db.StudentStat(username));
             return ack;

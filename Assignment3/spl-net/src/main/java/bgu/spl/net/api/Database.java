@@ -134,7 +134,7 @@ public class Database {
 		return student.toString();
 	}
 
-	private List<Short> sorting_courses(List<Short> lst_courses) {
+	public List<Short> sorting_courses(List<Short> lst_courses) {
 		List<Short> output = new LinkedList<>();
 		for (Short num : sorted_courses) {
 			if (lst_courses.contains(num))

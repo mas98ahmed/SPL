@@ -1,6 +1,7 @@
 package bgu.spl.net.api.Users;
 
 import bgu.spl.net.api.Course;
+import bgu.spl.net.api.Database;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public abstract class User {
         for (Course course : courses) {
             nums.add(course.getCourseNum());
         }
-        output += "Courses: " + nums.toString();
+        output += "Courses: " + Database.getInstance().sorting_courses(nums).toString();
         return output;
     }
 }
