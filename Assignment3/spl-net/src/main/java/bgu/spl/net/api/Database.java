@@ -88,8 +88,10 @@ public class Database {
 	public synchronized boolean Login(String username, String password) {
 		if(!active_users.containsKey(username)) {
 			if (users.containsKey(username)) {
-				active_users.putIfAbsent(username, users.get(username));
-				return users.get(username).getPassword().equals(password);
+				if(users.get(username).getPassword().equals(password)) {
+					active_users.putIfAbsent(username, users.get(username));
+					return true;
+				}
 			}
 		}
 		return false;

@@ -46,6 +46,7 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                 }
             }
             if (Opcode == 4 || Opcode == 11) {
+                System.out.println("Command: " + Opcode);
                 if (Opcode == 4) {
                     Opcode = 0;
                     bytes = new LinkedList<>();
@@ -63,6 +64,7 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                     courseNum[1] = bytes.get(3);
                     short course = bytesToShort(courseNum);
                     bytes = new LinkedList<>();
+                    System.out.println("Command: " + Opcode + "  " + course);
                     if (Opcode == 5) {
                         Opcode = 0;
                         return new COURSEREG(course);
@@ -92,6 +94,7 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                 if(zeroByteNum == 1){
                     int zero = indexof(bytes.subList(2, bytes.size()), (byte) 0);
                     String username = DecodeIntoString(bytes.subList(2, 2 + zero));
+                    System.out.println("Commmand: " + Opcode + " " + username);
                     bytes = new LinkedList<>();
                     zeroByteNum = 0;
                     Opcode = 0;
