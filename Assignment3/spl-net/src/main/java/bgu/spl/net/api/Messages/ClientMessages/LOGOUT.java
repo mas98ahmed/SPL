@@ -14,6 +14,7 @@ public class LOGOUT extends Message {
     public Message process(User activeuser) {
         if(activeuser != null){
             activeUser = null;
+            db.Logout(activeuser.getUsername());
             return new ACK(Short.parseShort("4"));
         }
         return new Error(Short.parseShort("4"));

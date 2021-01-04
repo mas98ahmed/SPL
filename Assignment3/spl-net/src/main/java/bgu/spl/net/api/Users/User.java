@@ -24,7 +24,6 @@ public abstract class User {
 
     public void RegisterCourse(Course course){
         courses.add(course);
-        System.out.println(course.getCourseNum());
     }
 
     public List<Course> getCourses() {

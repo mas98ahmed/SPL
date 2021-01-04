@@ -15,9 +15,12 @@ public class KDAMCHECK extends Message {
 
     @Override
     public Message process(User activeuser) {
-        ACK ack = new ACK(Short.parseShort("6"));
-        ack.setMessage(db.getKdamCourses(courseNum));
-        return ack;
+        if(!activeuser.isAdmin()) {
+            ACK ack = new ACK(Short.parseShort("6"));
+            ack.setMessage(db.getKdamCourses(courseNum));
+            return ack;
+        }
+        return new Error(Short.parseShort("6"));
     }
 
     @Override

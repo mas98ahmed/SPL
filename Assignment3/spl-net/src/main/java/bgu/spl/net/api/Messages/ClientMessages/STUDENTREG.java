@@ -4,6 +4,7 @@ import bgu.spl.net.api.Messages.Message;
 import bgu.spl.net.api.Messages.ServerMessages.ACK;
 import bgu.spl.net.api.Messages.ServerMessages.Error;
 import bgu.spl.net.api.Users.Admin;
+import bgu.spl.net.api.Users.Student;
 import bgu.spl.net.api.Users.User;
 
 public class STUDENTREG extends Message {
@@ -18,7 +19,7 @@ public class STUDENTREG extends Message {
 
     @Override
     public Message process(User activeuser) {
-        if(db.Register(new Admin(username, password))){
+        if(db.Register(new Student(username, password))){
             return new ACK(Short.parseShort("2"));
         }
         return new Error(Short.parseShort("2"));

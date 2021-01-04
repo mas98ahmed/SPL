@@ -21,6 +21,8 @@ public class Database {
 	private static Database singleton = null;
 	private final ConcurrentHashMap<Short, Course> courses = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<String, User> active_users = new ConcurrentHashMap<>();
+	private final List<Short> sorted_courses = new LinkedList<>();
 
 	//to prevent user from creating new Database
 	private Database() {
@@ -47,6 +49,7 @@ public class Database {
 				String data = myReader.nextLine();
 				String[] line = data.split("\\|");
 				short courseNum = Short.parseShort(line[0]);
+				sorted_courses.add(courseNum);
 				String courseName = line[1];
 				String[] kdamcourses = line[2].substring(1,line[2].length() - 1).split(",");
 				List<Short> kdamnums = new ArrayList<>();
@@ -69,6 +72,7 @@ public class Database {
 	public User getUser(String username){
 		return users.get(username);
 	}
+
 	public synchronized boolean Register(User user) {
 		if(!users.containsKey(user.getUsername())) {
 			users.putIfAbsent(user.getUsername(), user);
@@ -81,14 +85,21 @@ public class Database {
 		return courses.get(courseNum);
 	}
 
-	public boolean Login(String username, String password) {
-		if(users.containsKey(username)){
-			return users.get(username).getPassword().equals(password);
+	public synchronized boolean Login(String username, String password) {
+		if(!active_users.containsKey(username)) {
+			if (users.containsKey(username)) {
+				active_users.putIfAbsent(username, users.get(username));
+				return users.get(username).getPassword().equals(password);
+			}
 		}
 		return false;
 	}
 
-	public boolean CourseRegister(User activeUser, short courseNum) {
+	public void Logout(String username){
+		active_users.remove(username);
+	}
+
+	public synchronized boolean CourseRegister(User activeUser, short courseNum) {
 		Course course = courses.get(courseNum);
 		boolean output = false;
 		if(courses.containsKey(courseNum)) {
@@ -101,12 +112,11 @@ public class Database {
 
 	public String getKdamCourses(short courseNum) {
 		Course course = courses.get(courseNum);
-		return course.getKdamCoursesList().toString();
+		return sorting_courses(course.getKdamCoursesList()).toString();
 	}
 
 	public boolean Unregister(User activeuser, short courseNum) {
 		if(activeuser.getCourses().contains(courses.get(courseNum))) {
-			System.out.println("unregistered: " + courseNum);
 			activeuser.getCourses().remove(courses.get(courseNum));
 			courses.get(courseNum).Unregister(activeuser);
 			return true;
@@ -122,5 +132,14 @@ public class Database {
 	public String StudentStat(String username) {
 		User student = users.get(username);
 		return student.toString();
+	}
+
+	private List<Short> sorting_courses(List<Short> lst_courses) {
+		List<Short> output = new LinkedList<>();
+		for (Short num : sorted_courses) {
+			if (lst_courses.contains(num))
+				output.add(num);
+		}
+		return output;
 	}
 }

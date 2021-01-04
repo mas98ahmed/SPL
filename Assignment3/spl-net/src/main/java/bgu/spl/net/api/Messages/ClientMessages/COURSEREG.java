@@ -15,9 +15,10 @@ public class COURSEREG extends Message {
 
     @Override
     public Message process(User activeuser) {
-
-        if(db.CourseRegister(activeuser,courseNum))
-            return new ACK(Short.parseShort("5"));
+        if(!activeuser.isAdmin()) {
+            if (db.CourseRegister(activeuser, courseNum))
+                return new ACK(Short.parseShort("5"));
+        }
         return new Error(Short.parseShort("5"));
     }
 

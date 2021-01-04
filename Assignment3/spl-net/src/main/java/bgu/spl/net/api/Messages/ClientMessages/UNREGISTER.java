@@ -19,8 +19,10 @@ public class UNREGISTER extends Message {
 
     @Override
     public Message process(User activeuser) {
-        if(db.Unregister(activeuser, courseNum)){
-            return new ACK(Short.parseShort("10"));
+        if(!activeuser.isAdmin()) {
+            if (db.Unregister(activeuser, courseNum)) {
+                return new ACK(Short.parseShort("10"));
+            }
         }
         return new Error(Short.parseShort("10"));
     }

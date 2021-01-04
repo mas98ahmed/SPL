@@ -2,8 +2,6 @@ package bgu.spl.net.api;
 
 import bgu.spl.net.api.Messages.ClientMessages.*;
 import bgu.spl.net.api.Messages.Message;
-
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -14,23 +12,20 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
 
     @Override
     public Message decodeNextByte(byte nextByte) {
-        if (Opcode == 0) {
-            bytes.add(nextByte);
-        }
+        bytes.add(nextByte);
         if (bytes.size() >= 2) {
             byte[] op = new byte[2];
             op[0] = bytes.get(0);
             op[1] = bytes.get(1);
             Opcode = bytesToShort(op);
             if (Opcode == 1 || Opcode == 2 || Opcode == 3) {
-                bytes.add(nextByte);
                 if(nextByte == 0){
                     zeroByteNum++;
                 }
                 if(zeroByteNum == 2){
                     int first_zero = indexof(bytes.subList(2, bytes.size()), (byte) 0);
                     int second_zero = indexof(bytes.subList(first_zero + 3, bytes.size()), (byte) 0);
-                    String username = DecodeIntoString(bytes.subList(3, 2 + first_zero));
+                    String username = DecodeIntoString(bytes.subList(2, 2 + first_zero));
                     String password = DecodeIntoString(bytes.subList(3 + first_zero, 3 + first_zero + second_zero));
                     System.out.println("username: " + username);
                     System.out.println("password: " + password);
@@ -62,14 +57,11 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                 }
             }
             if (Opcode == 5 || Opcode == 6 || Opcode == 7 || Opcode == 9 || Opcode == 10) {
-                bytes.add(nextByte);
-                if(bytes.size() == 5) {
+                if(bytes.size() == 4) {
                     byte[] courseNum = new byte[2];
-                    courseNum[0] = bytes.get(3);
-                    courseNum[1] = bytes.get(4);
+                    courseNum[0] = bytes.get(2);
+                    courseNum[1] = bytes.get(3);
                     short course = bytesToShort(courseNum);
-                    System.out.println("bytes decode: " + bytes);
-                    System.out.println("course decode: " + course);
                     bytes = new LinkedList<>();
                     if (Opcode == 5) {
                         Opcode = 0;
@@ -94,13 +86,12 @@ public class MessageEncoderDecoderImpl implements MessageEncoderDecoder<Message>
                 }
             }
             if (Opcode == 8) {
-                bytes.add(nextByte);
                 if(nextByte == 0){
                     zeroByteNum++;
                 }
                 if(zeroByteNum == 1){
                     int zero = indexof(bytes.subList(2, bytes.size()), (byte) 0);
-                    String username = DecodeIntoString(bytes.subList(3, 2 + zero));
+                    String username = DecodeIntoString(bytes.subList(2, 2 + zero));
                     bytes = new LinkedList<>();
                     zeroByteNum = 0;
                     Opcode = 0;
