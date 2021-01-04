@@ -39,13 +39,6 @@ void shortToBytes(short num, char* bytesArr)
     bytesArr[1] = (num & 0xFF);
 }
 
-void relax (char* charArray, const string str){
-    for (unsigned i = 0; i < str.length() ; ++i) {
-        charArray[i] = str[i];
-    }
-}
-
-
 class KeyboardReader{
 
 private:
@@ -173,6 +166,7 @@ public:
             }
             else{
                 cout<< "Damn wrong message detected" <<endl;
+                send_mutex.unlock();
             }
         }
     }
@@ -189,7 +183,6 @@ public:
     void run() {
         while (connected) {
             receive_mutex.lock();
-            cout<<"listen"<<endl;
             char replyBytes[4];
             connectionHandler->getBytes(replyBytes,4);
             char opcodeAsBytes[] = {replyBytes[0], replyBytes[1]};
@@ -198,13 +191,12 @@ public:
             short messageOpcode = bytesToShort(messageOpcodeAsBytes);
 
             if (opcode == 12){
-                //optionalPart = optionalPart.substr(0,optionalPart.length()-1); // it may be -2 to remove null character, will see during testing...
-                //string space = " ";
-                //optionalPart = space.append(optionalPart);
                 cout << "ACK " << messageOpcode << endl;
                 string optionalPart = "";
                 if(connectionHandler->getFrameAscii(optionalPart,'\0')){
-                    cout << optionalPart << endl;
+                    if(optionalPart != ""){
+                        cout << optionalPart << endl;
+                    }
                 }
                 if(messageOpcode == 4){
                     connected = false;
