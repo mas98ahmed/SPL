@@ -236,7 +236,7 @@ int main (int argc, char *argv[]) {
         KeyboardReader keyboardReader(connectionHandler);
         SocketReader socketReader(connectionHandler);
 
-        receive_mutex.lock();
+        receive_mutex.lock(); // I think it is wrong to do this, it would block the main thread!
         thread keyboardListener(&KeyboardReader::run,keyboardReader);
         thread socketListener(&SocketReader::run,socketReader);
 
