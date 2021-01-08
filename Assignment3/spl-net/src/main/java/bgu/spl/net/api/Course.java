@@ -13,7 +13,7 @@ public class Course {
     private List<User> RegisterStudents;
 
     public Course(short courseNum, String courseName,
-                  List<Short> KdamCoursesList, int numOfMaxStudents){
+                  List<Short> KdamCoursesList, int numOfMaxStudents) {
         this.courseNum = courseNum;
         this.courseName = courseName;
         this.KdamCoursesList = KdamCoursesList;
@@ -37,34 +37,34 @@ public class Course {
         return courseName;
     }
 
-    public synchronized boolean RegisterStudent(User user){
+    public synchronized boolean RegisterStudent(User user) {
         boolean kdam_courses = true;
         List<Course> student_courses = user.getCourses();
         List<Short> student_courses_num = new LinkedList<>();
         for (Course course : student_courses) {
             student_courses_num.add(course.getCourseNum());
         }
-        for (short course : KdamCoursesList){
+        for (short course : KdamCoursesList) {
             if (!student_courses_num.contains(course)) {
                 kdam_courses = false;
                 break;
             }
         }
-        if(RegisterStudents.size() < numOfMaxStudents && kdam_courses) {
+        if (RegisterStudents.size() < numOfMaxStudents && kdam_courses) {
             RegisterStudents.add(user);
             return true;
         }
         return false;
     }
 
-    public int RegisteredNum(){
+    public int RegisteredNum() {
         return RegisterStudents.size();
     }
 
     @Override
     public String toString() {
-        String output = "Course: (" + courseNum + ") " + courseName +"\n";
-        output += "Seats Available: " + RegisterStudents.size() + " / " + numOfMaxStudents +"\n";
+        String output = "Course: (" + courseNum + ") " + courseName + "\n";
+        output += "Seats Available: " + (numOfMaxStudents - RegisterStudents.size()) + " / " + numOfMaxStudents + "\n";
         List<String> names = new ArrayList<>();
         for (User user : RegisterStudents) {
             names.add(user.getUsername());
