@@ -5,4 +5,4 @@ Created on Mon Jan 11 13:27:56 2021
 @author: luee
 """
 
-class logistic_DAO:
+class _logistic_DAO:
