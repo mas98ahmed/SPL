@@ -17,9 +17,14 @@ class _clinic_DAO:
         except Exception as error:
             print(error)
             
-    def update_demand(self, _id, ,location, new_demand): # need to check about the location or id >>>>?????
+    def update_demand(self, location, amount):  # should support it with some triggers before and after about the case of ZERO
         try:
-            pass
+            self._conn.execute(""" 
+                UPDATE clinics
+                SET demand = demand - ? 
+                WHERE location = ?                               
+            
+            """, location, amount)
         except Exception as error:
             print(error)
             
