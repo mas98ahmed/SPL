@@ -6,7 +6,7 @@ Created on Mon Jan 11 13:27:55 2021
 """
 from PersistenceLayer.Repository import repo
 class _clinic_DAO:
-    def __init__(self, conn):
+    def __init__(self):
         self._conn = repo._conn
     
     def insert(self, clinic):
@@ -16,4 +16,12 @@ class _clinic_DAO:
             """, [clinic.id, clinic.name, clinic.demand, clinic.logistic])
         except Exception as error:
             print(error)
+            
+    def update_demand(self, _id, ,location, new_demand): # need to check about the location or id >>>>?????
+        try:
+            pass
+        except Exception as error:
+            print(error)
+            
+            
 clinic_DAO = _clinic_DAO()
