@@ -4,18 +4,22 @@ Created on Mon Jan 11 15:14:17 2021
 
 @author: luee
 """
+import sqlite3
+import atexit
 
 class _Repository:
+
     def __init__(self, path):
         self._conn = sqlite3.connect('')
-        self.students = _Students(self._conn)
-        self.assignments = _Assignments(self._conn)
-        self.grades = _Grades(self._conn)
+        pass
  
     def _close(self):
         self._conn.commit()
         self._conn.close()
  
+    def create_database(self):
+        pass
+    
     def create_tables(self):
         _conn.executescript("""        
         
