@@ -9,51 +9,54 @@ import atexit
 
 class _Repository:
 
-    def __init__(self, path):
-        self._conn = sqlite3.connect('')
-        pass
+    def __init__(self):
+        self._conn = sqlite3.connect('database.db')
+        
  
     def _close(self):
         self._conn.commit()
         self._conn.close()
- 
-    def create_database(self):
-        pass
+
     
     def create_tables(self):
-        _conn.executescript("""        
+        try:
+            self._conn.executescript("""        
+            
+            CREATE TABLE logistics (
+                id                 INT     PRIMARY KEY,
+                name     TEXT    NOT NULL,
+                count_sent  INT     NOT NULL,
+                count_received  INT  NOT NULL
+            );
+            
+            CREATE TABLE suppliers (
+                id                 INT     PRIMARY KEY,
+                name     TEXT    NOT NULL,
+                logistic   INT     NOT NULL,
+                FOREIGN KEY(logistic)     REFERENCES logistics(id)
+            );
+     
+            CREATE TABLE clinics (
+                id      INT     PRIMARY KEY,
+                location  TEXT     NOT NULL,
+                demand           INT     NOT NULL,
+                logistic   INT     NOT NULL,
+                FOREIGN KEY(logistic)     REFERENCES logistics(id)
+            );
+            
+            CREATE TABLE vaccines (
+                id      INT         PRIMARY KEY,
+                date    DATETIME        NOT NULL,
+                supplier    INT,
+                quantity    INT     NOT NULL,
+                FOREIGN KEY(supplier)     REFERENCES suppliers(id)
+            );
+        """)
+            
+        except Exception as error:
+            print(error) 
         
-        CREATE TABLE logistics (
-            id                 INT     PRIMARY KEY,
-            name     TEXT    NOT NULL,
-            count_sent  INT     NOT NULL,
-            count_received  INT  NOT NULL
-        );
         
-        CREATE TABLE suppliers (
-            id                 INT     PRIMARY KEY,
-            name     TEXT    NOT NULL,
-            logistic   INT     NOT NULL,
-            FOREIGN KEY(logistic)     REFERENCES logistics(id)
-        );
- 
-        CREATE TABLE clinics (
-            id      INT     PRIMARY KEY,
-            location  TEXT     NOT NULL,
-            demand           INT     NOT NULL,
-            logistic   INT     NOT NULL,
-            FOREIGN KEY(logistic)     REFERENCES logistics(id)
-        );
-        
-        CREATE TABLE vaccines (
-            id      INT         PRIMARY KEY,
-            date    DATETIME        NOT NULL,
-            supplier    INT,
-            quantity    INT     NOT NULL,
-            FOREIGN KEY(supplier)     REFERENCES suppliers(id)
-        );
-    """)
- 
 # the repository singleton
 repo = _Repository()
 atexit.register(repo._close)
