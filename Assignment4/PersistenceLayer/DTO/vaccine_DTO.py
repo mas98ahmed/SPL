@@ -7,7 +7,7 @@ Created on Mon Jan 11 13:27:16 2021
 
 import datetime
 
-class vaccine_DAO:
+class vaccine_DTO:
     _id: int
     _date: datetime
     _supplier: int

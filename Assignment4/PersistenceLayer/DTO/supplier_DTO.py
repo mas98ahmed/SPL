@@ -5,7 +5,7 @@ Created on Mon Jan 11 13:27:55 2021
 @author: luee
 """
 
-class supplier_DAO:
+class supplier_DTO:
     _id: int
     _name: str
     _logistic: int

@@ -5,7 +5,7 @@ Created on Mon Jan 11 13:27:56 2021
 @author: luee
 """
 
-class logistic_DAO:
+class logistic_DTO:
     _id: int
     _name: str
     _count_sent: int
