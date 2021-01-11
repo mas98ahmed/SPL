@@ -7,7 +7,7 @@ Created on Mon Jan 11 13:27:55 2021
 from PersistenceLayer.Repository import repo
 class _supplier_DAO:
     
-    def __init__(self, conn):
+    def __init__(self):
         self._conn = repo._conn
     
     def insert(self, supplier):
