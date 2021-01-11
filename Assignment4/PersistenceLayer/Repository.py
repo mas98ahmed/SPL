@@ -36,14 +36,14 @@ class _Repository:
             
             CREATE TABLE suppliers (
                 id                 INT     PRIMARY KEY,
-                name     TEXT    NOT NULL,
+                name     TEXT    NOT NULL UNIQUE,
                 logistic   INT     NOT NULL,
                 FOREIGN KEY(logistic)     REFERENCES logistics(id)
             );
      
             CREATE TABLE clinics (
                 id      INT     PRIMARY KEY,
-                location  TEXT     NOT NULL,
+                location  TEXT     NOT NULL UNIQUE,
                 demand           INT     NOT NULL,
                 logistic   INT     NOT NULL,
                 FOREIGN KEY(logistic)     REFERENCES logistics(id)
@@ -91,27 +91,53 @@ class _Repository:
             i+=1
         pass
     
-    def send_shipment(location, amount):
+    
+    def find_relevant_logistic_by_supplier(self, supplier):
+        output = None
+        try:
+            cursor = self._conn.cursor("""
+            SELECT logistics.id
+            FROM(                           
+            (SELECT logistic
+            FROM suppliers
+            WHERE id=?) as filtered_suppliers
+            JOIN           
+            logistics        
+            ON filtered_suppliers.logistic = logistics.id                        
+            )""",supplier._id)
+            temp = cursor.fetchall()
+            for i in range(temp.count):
+                output.insert(temp[i][0])
+            pass
+        except Exception as error:
+            print(error)
+        return output
+    
+    def send_shipment(self, location, amount):
         #
         try:
+                     
+            
+            
+            
+            #add line to report(summary file)...
             pass
         except Exception as error:
             print(error)
         
         
-        #add line to report(summary file)...
-        pass
-
-    def receive_shipment(name, amount, date):
+    def receive_shipment(self, name, amount, date):
         try:
+            
+            
+            suppliers = supplier_DAO.get_supplier_by_name(name)
+            for i in range(suppliers.count):
+                
+            self.find_relevant_logistic_by_supplier()
+            #add line to report(summary file)...
             pass
         except Exception as error:
             print(error)
-        
-        
-        
-        #add line to report(summary file)...
-        pass
         
         
 # the repository singleton
