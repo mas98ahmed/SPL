@@ -55,6 +55,15 @@ class _Repository:
             
         except Exception as error:
             print(error) 
+            pass
+        pass
+    
+    
+    def send_shipment(location, amount):
+        pass
+
+    def receive_shipment(name, amount, date):
+        pass
         
         
 # the repository singleton
