@@ -13,15 +13,18 @@ from DAO.logistic_DAO import logistic_DAO
 from DTO import vaccine_DTO, supplier_DTO, clinic_DTO, logistic_DTO
 
 class _Repository:
-
+    
     def __init__(self):
         self._conn = sqlite3.connect('database.db')
         pass
     
+    def get_connection(self):
+        return self._conn
+    
     def _close(self):
         self._conn.commit()
         self._conn.close()
-
+        
     
     def create_tables(self):
         try:
@@ -50,11 +53,12 @@ class _Repository:
             );
             
             CREATE TABLE vaccines (
-                id      INT         PRIMARY KEY,
+                id      INT,
                 date    DATETIME        NOT NULL,
                 supplier    INT,
                 quantity    INT     NOT NULL,
-                FOREIGN KEY(supplier)     REFERENCES suppliers(id)
+                FOREIGN KEY(supplier)     REFERENCES suppliers(id),
+                PRIMARY KEY("id" AUTOINCREMENT)
             );
         """)
             
@@ -92,53 +96,40 @@ class _Repository:
         pass
     
     
-    def find_relevant_logistic_by_supplier(self, supplier):
-        output = None
-        try:
-            cursor = self._conn.cursor("""
-            SELECT logistics.id
-            FROM(                           
-            (SELECT logistic
-            FROM suppliers
-            WHERE id=?) as filtered_suppliers
-            JOIN           
-            logistics        
-            ON filtered_suppliers.logistic = logistics.id                        
-            )""",supplier._id)
-            temp = cursor.fetchall()
-            for i in range(temp.count):
-                output.insert(temp[i][0])
-            pass
-        except Exception as error:
-            print(error)
-        return output
-    
     def send_shipment(self, location, amount):
         #
         try:
-                     
-            
-            
-            
+           clinic_DAO.update_demand(location)
+           #remove the amount from the vaccines table due to it's old date
+           # I have to add a trigger on the case of ZERO in vaccine table.
+                      
+           temp = amount
+           while(temp >0):
+               vaccine = vaccine_DAO.get_older_vaccine()
+               temp = vaccine_DAO.update_amount_and_process(vaccine, temp)
+               supplier = supplier_DAO.get_supplier_by_name(vaccine.get_supplier())
+               logistic = supplier.get_logistic()
+               logistic_DAO.update_count_sent(logistic, amount)
             #add line to report(summary file)...
-            pass
+            
         except Exception as error:
             print(error)
-        
+        raise Exception('add line to report(summary file)...')
         
     def receive_shipment(self, name, amount, date):
         try:
+            vaccine = vaccine_DTO(date, name, amount)
+            vaccine_DAO.insert(vaccine)
+            supplier = supplier_DAO.get_supplier_by_name(name)
+            logistic = supplier.get_logistic()
+            logistic_DAO.update_count_received(logistic, amount)
             
-            
-            suppliers = supplier_DAO.get_supplier_by_name(name)
-            for i in range(suppliers.count):
-                
-            self.find_relevant_logistic_by_supplier()
             #add line to report(summary file)...
+            
             pass
         except Exception as error:
             print(error)
-        
+        raise Exception('add line to report(summary file)...')
         
 # the repository singleton
 repo = _Repository()
