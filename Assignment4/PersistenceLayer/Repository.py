@@ -6,13 +6,18 @@ Created on Mon Jan 11 15:14:17 2021
 """
 import sqlite3
 import atexit
+from DAO.vaccine_DAO import vaccine_DAO
+from DAO.supplier_DAO import supplier_DAO
+from DAO.clinic_DAO import clinic_DAO
+from DAO.logistic_DAO import logistic_DAO
+from DTO import vaccine_DTO, supplier_DTO, clinic_DTO, logistic_DTO
 
 class _Repository:
 
     def __init__(self):
         self._conn = sqlite3.connect('database.db')
-        
- 
+        pass
+    
     def _close(self):
         self._conn.commit()
         self._conn.close()
@@ -58,11 +63,40 @@ class _Repository:
             pass
         pass
     
+    def store(database_records):
+        i = 1
+        x = database_records[0][0]
+        for number_of_vaccines in range(x):
+            record = database_records[i]
+            vaccine = vaccine_DTO(record[0], record[1], record[2], record[3])
+            vaccine_DAO.insert(vaccine)
+            i+=1
+        x = x + database_records[0][1]            
+        for number_of_suppliers in range(x):
+            record = database_records[i]
+            supplier = supplier_DTO(record[0], record[1], record[2])
+            supplier_DAO.insert(supplier)
+            i+=1
+        x = x + database_records[0][2]
+        for number_of_clinics in range(x):
+            record = database_records[i]
+            clinic = clinic_DTO(record[0], record[1], record[2], record[3])
+            clinic_DAO.insert(clinic)
+            i+=1
+        x = x + database_records[0][3]
+        for number_of_logistics in range(x):
+            record = database_records[i]
+            logistic = logistic_DTO(record[0], record[1], record[2], record[3])
+            logistic_DAO.insert(logistic)
+            i+=1
+        pass
     
     def send_shipment(location, amount):
+        # 
         pass
 
     def receive_shipment(name, amount, date):
+        
         pass
         
         
