@@ -92,11 +92,19 @@ class _Repository:
         pass
     
     def send_shipment(location, amount):
-        # 
+        #
+        
+        
+        
+        #add line to report(summary file)...
         pass
 
     def receive_shipment(name, amount, date):
         
+        
+        
+        
+        #add line to report(summary file)...
         pass
         
         

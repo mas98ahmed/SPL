@@ -5,9 +5,6 @@ Spyder Editor
 This is a temporary script file.
 """
 import sys
-
-
-
 from PersistenceLayer.Repository import repo
 
 def database_building(database_records):
@@ -15,8 +12,6 @@ def database_building(database_records):
     repo.store(database_records)
     pass
 
-def reporting():
-    pass
 
 def manage_orders(orders):
     for i in range(orders.count):
