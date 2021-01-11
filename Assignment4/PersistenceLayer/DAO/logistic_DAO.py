@@ -4,11 +4,11 @@ Created on Mon Jan 11 13:27:56 2021
 
 @author: luee
 """
-
+from PersistenceLayer.Repository import repo
 class _logistic_DAO:
     def __init__(self, conn):
-        self._conn = conn
-    pass
+        self._conn = repo._conn
+    
     def insert(self, logistic):
         try:
             self._conn.execute("""

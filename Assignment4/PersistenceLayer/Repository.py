@@ -93,14 +93,20 @@ class _Repository:
     
     def send_shipment(location, amount):
         #
-        
+        try:
+            pass
+        except Exception as error:
+            print(error)
         
         
         #add line to report(summary file)...
         pass
 
     def receive_shipment(name, amount, date):
-        
+        try:
+            pass
+        except Exception as error:
+            print(error)
         
         
         

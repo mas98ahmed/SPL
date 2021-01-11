@@ -4,11 +4,11 @@ Created on Mon Jan 11 13:27:16 2021
 
 @author: luee
 """
-
+from PersistenceLayer.Repository import repo
 class _vaccine_DAO:
 
     def __init__(self, conn):
-        self._conn = conn
+        self._conn = repo._conn
     
     def insert(self, vaccine):
         try:
