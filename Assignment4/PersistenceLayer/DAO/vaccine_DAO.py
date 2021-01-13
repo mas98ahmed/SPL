@@ -21,7 +21,7 @@ class _vaccine_DAO:
     
     def delete(self, _id):
         try:
-            self._conn.execute(""" DELETE FROM vaccines where id=? ;""",_id)
+            self._conn.execute(""" DELETE FROM vaccines where id=? ;""",[_id])
             self._conn.commit()
         except Exception as error:
             print(error)
@@ -35,7 +35,7 @@ class _vaccine_DAO:
                 self._conn.execute(delete, [vaccine.get_id()])
                 remainder = 0
             elif vaccine.get_quantity() > amount_to_reduce:
-                self._conn.execute(update, [vaccine.get_id(), vaccine.get_quantity() - amount_to_reduce])
+                self._conn.execute(update, [vaccine.get_quantity() - amount_to_reduce, vaccine.get_id()])
                 remainder = 0                
             elif vaccine.get_quantity() < amount_to_reduce:
                 self._conn.execute(delete, [vaccine.get_id()])

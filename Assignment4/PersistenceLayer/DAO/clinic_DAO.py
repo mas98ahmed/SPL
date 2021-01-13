@@ -26,7 +26,7 @@ class _clinic_DAO:
                 UPDATE clinics
                 SET demand = demand - ? 
                 WHERE location = ?                               
-           ; """, [location, amount])
+           ; """, [amount, location])
             self._conn.commit()
         except Exception as error:
             print(error)

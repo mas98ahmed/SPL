@@ -73,13 +73,9 @@ class _Repository:
         pass
     
     def store(self, database_records):
-        print(database_records)
-        print("true")
         indicator = database_records.pop(0)
         for i in range(len(indicator)):
             indicator[i] = int(indicator[i].split('\n')[0])
-        print(indicator)
-        print(database_records)
         number_of_vaccines = indicator[0]
         number_of_suppliers = indicator[1]
         number_of_clinics = indicator[2]
@@ -88,8 +84,6 @@ class _Repository:
         while(number_of_vaccines > 0):
             record = database_records.pop(0)
             # we do not consider the id from the config file.......
-            print(True)
-            print(record[1].replace('âˆ’','-'))
             vaccine = vaccine_DTO(None, datetime.datetime.strptime(record[1].replace('âˆ’','-'), '%Y-%m-%d'), int(record[2]), int(record[3].split('\n')[0]))
             self.v_DAO.insert(vaccine)
             number_of_vaccines-=1
@@ -115,9 +109,9 @@ class _Repository:
         output = None
         try:
             cursor = self._conn.cursor()
-            output = cursor.executescript("""SELECT sum(demand)
+            output = cursor.execute("""SELECT sum(demand)
             FROM clinics;""").fetchone()[0]
-            
+            cursor.close()
         except Exception as error:
             print(error)
         return output
@@ -126,8 +120,9 @@ class _Repository:
         output = None
         try:
             cursor = self._conn.cursor()
-            output = cursor.executescript(""" SELECT sum(quantity)
+            output = cursor.execute(""" SELECT sum(quantity)
             FROM vaccines; """).fetchone()[0]
+            cursor.close()
         except Exception as error:
             print(error)
         return output        
@@ -136,7 +131,8 @@ class _Repository:
         output = None
         try:
             cursor = self._conn.cursor()
-            output = cursor.executescript("""SELECT sum(count_sent) FROM logistics;""").fetchone()[0]
+            output = cursor.execute("""SELECT sum(count_sent) FROM logistics;""").fetchone()[0]
+            cursor.close()
         except Exception as error:
             print(error)
         return output
@@ -145,36 +141,39 @@ class _Repository:
         output = None
         try:
             cursor = self._conn.cursor()
-            output = cursor.executescript("""SELECT sum(count_received) FROM logistics;""").fetchone()[0]
+            output = cursor.execute("""SELECT sum(count_received) FROM logistics;""").fetchone()[0]
+            cursor.close()
         except Exception as error:
             print(error)
         return output    
     
     def send_shipment(self, location, amount):
         try:
-            self._clinic_DAO.update_demand(location)
             temp = amount
             while(temp >0):
-                vaccine = vaccine_DAO.get_older_vaccine()
-                temp = vaccine_DAO.update_amount_and_process(vaccine, temp)
-                supplier = supplier_DAO.get_supplier_by_name(vaccine.get_supplier())
+                vaccine = self.v_DAO.get_older_vaccine()
+                temp = self.v_DAO.update_amount_and_process(vaccine, temp)
+                supplier = self.s_DAO.get_supplier_by_id(vaccine.get_supplier())
                 logistic = supplier.get_logistic()
-                logistic_DAO.update_count_sent(logistic, amount)
+            self.l_DAO.update_count_sent(logistic, amount-temp)
+            self.c_DAO.update_demand(location,amount)
             with open("output.txt", "a") as file_object:
-                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent()%"\n")
+                output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
+                file_object.write(output_str)
         except Exception as error:
             print(error)
-        
-        
+       
     def receive_shipment(self, name, amount, date):
         try:
-            vaccine = vaccine_DTO(date, name, amount)
-            vaccine_DAO.insert(vaccine)
-            supplier = supplier_DAO.get_supplier_by_name(name)
+            
+            supplier = self.s_DAO.get_supplier_by_name(name)
+            vaccine = vaccine_DTO(None, date, supplier.get_id(), amount)
+            self.v_DAO.insert(vaccine)
             logistic = supplier.get_logistic()
-            logistic_DAO.update_count_received(logistic, amount)
+            self.l_DAO.update_count_received(logistic, amount)
             with open("output.txt", "a") as file_object:
-                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent()%"\n")
+                output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
+                file_object.write(output_str)
         except Exception as error:
             print(error)
         
