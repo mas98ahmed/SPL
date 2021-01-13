@@ -4,7 +4,7 @@ Created on Mon Jan 11 13:27:55 2021
 
 @author: luee
 """
-import clinic_DTO
+from PersistenceLayer.DTO.clinic_DTO import clinic_DTO
 class _clinic_DAO:
     def __init__(self, conn):
         self._conn = conn

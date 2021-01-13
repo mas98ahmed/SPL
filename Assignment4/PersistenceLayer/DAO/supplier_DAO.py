@@ -4,7 +4,7 @@ Created on Mon Jan 11 13:27:55 2021
 
 @author: luee
 """
-import supplier_DTO
+from PersistenceLayer.DTO.supplier_DTO import supplier_DTO
 class _supplier_DAO:
     def __init__(self, conn):
         self._conn = conn

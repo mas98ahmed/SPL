@@ -4,7 +4,7 @@ Created on Mon Jan 11 13:27:16 2021
 
 @author: luee
 """
-import vaccine_DTO
+from PersistenceLayer.DTO.vaccine_DTO import vaccine_DTO
 
 class _vaccine_DAO:
     def __init__(self, conn):

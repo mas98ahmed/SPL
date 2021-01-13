@@ -7,22 +7,22 @@ Created on Mon Jan 11 15:14:17 2021
 import sqlite3
 import atexit
 import datetime
-import vaccine_DAO
-import supplier_DAO
-import clinic_DAO
-import logistic_DAO
-from vaccine_DTO import vaccine_DTO
-from supplier_DTO import supplier_DTO
-from clinic_DTO import clinic_DTO
-from logistic_DTO import logistic_DTO
+from PersistenceLayer.DAO.vaccine_DAO import _vaccine_DAO
+from PersistenceLayer.DAO.supplier_DAO import _supplier_DAO
+from PersistenceLayer.DAO.clinic_DAO import _clinic_DAO
+from PersistenceLayer.DAO.logistic_DAO import _logistic_DAO
+from PersistenceLayer.DTO.vaccine_DTO import vaccine_DTO
+from PersistenceLayer.DTO.supplier_DTO import supplier_DTO
+from PersistenceLayer.DTO.clinic_DTO import clinic_DTO
+from PersistenceLayer.DTO.logistic_DTO import logistic_DTO
 
 class _Repository:    
     def __init__(self):
         self._conn = sqlite3.connect('database.db')
-        self.v_DAO = vaccine_DAO._vaccine_DAO(self._conn)
-        self.s_DAO = supplier_DAO._supplier_DAO(self._conn)
-        self.c_DAO = clinic_DAO._clinic_DAO(self._conn)
-        self.l_DAO = logistic_DAO._logistic_DAO(self._conn)
+        self.v_DAO = _vaccine_DAO(self._conn)
+        self.s_DAO = _supplier_DAO(self._conn)
+        self.c_DAO = _clinic_DAO(self._conn)
+        self.l_DAO = _logistic_DAO(self._conn)
         pass
     
     def get_connection(self):

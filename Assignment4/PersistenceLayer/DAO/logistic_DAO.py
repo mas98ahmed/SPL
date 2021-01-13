@@ -4,7 +4,7 @@ Created on Mon Jan 11 13:27:56 2021
 
 @author: luee
 """
-import logistic_DTO
+from PersistenceLayer.DTO.logistic_DTO import logistic_DTO
 class _logistic_DAO:
     def __init__(self, conn):
         self._conn = conn
