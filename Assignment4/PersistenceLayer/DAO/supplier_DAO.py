@@ -4,19 +4,18 @@ Created on Mon Jan 11 13:27:55 2021
 
 @author: luee
 """
-from PersistenceLayer import Repository
-from PersistenceLayer.DTO.supplier_DTO import supplier_DTO
+import supplier_DTO
 class _supplier_DAO:
-    
-    def __init__(self):
-        self._conn = Repository.repo.get_connection()
+    def __init__(self, conn):
+        self._conn = conn
+        pass
     
     def insert(self, supplier):
         try:
             self._conn.execute("""
                 INSERT INTO suppliers (id, name, logistic) VALUES (?, ?, ?);
             """, [supplier.get_id(), supplier.get_name(), supplier.get_logistic()])
-            #self._conn.commit()
+            self._conn.commit()
         except Exception as error:
             print(error)
             
@@ -26,9 +25,9 @@ class _supplier_DAO:
             cursor = self._conn.cursor() 
             sup_row = cursor.execute(""" SELECT * FROM suppliers WHERE name=? ;""",name).fetchone()
             supplier = supplier_DTO(sup_row[0], sup_row[1], sup_row[2])
+            cursor.close()
         except Exception as error:
             print(error)
         return supplier
 
         
-supplier_DAO = _supplier_DAO()

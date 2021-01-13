@@ -4,19 +4,18 @@ Created on Mon Jan 11 13:27:55 2021
 
 @author: luee
 """
-from PersistenceLayer import Repository
-from PersistenceLayer.DTO.clinic_DTO import clinic_DTO
+import clinic_DTO
 class _clinic_DAO:
-    def __init__(self):
-        self._conn = Repository.repo.get_connection()
+    def __init__(self, conn):
+        self._conn = conn
 
 
     def insert(self, clinic):
         try:
             self._conn.execute("""
                 INSERT INTO clinics (id, location, demand, logistic) VALUES (?, ?, ?, ?);
-            """, [clinic.get_id(), clinic.get_name(), clinic.get_demand(), clinic.get_logistic()])
-            #self._conn.commit()
+            """, [clinic.get_id(), clinic.get_location(), clinic.get_demand(), clinic.get_logistic()])
+            self._conn.commit()
         except Exception as error:
             print(error)
 
@@ -28,9 +27,8 @@ class _clinic_DAO:
                 SET demand = demand - ? 
                 WHERE location = ?                               
            ; """, [location, amount])
-            #self._conn.commit()
+            self._conn.commit()
         except Exception as error:
             print(error)
             
             
-clinic_DAO = _clinic_DAO()

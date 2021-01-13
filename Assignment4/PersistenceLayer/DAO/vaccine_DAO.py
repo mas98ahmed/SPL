@@ -4,19 +4,17 @@ Created on Mon Jan 11 13:27:16 2021
 
 @author: luee
 """
-from PersistenceLayer import Repository
-from PersistenceLayer.DTO import vaccine_DTO
+import vaccine_DTO
 
 class _vaccine_DAO:
-    
-    def __init__(self):
-        self._conn = Repository.repo.get_connection()
+    def __init__(self, conn):
+        self._conn = conn  
         pass
     
     def insert(self, vaccine):
         try:
             self._conn.execute("""INSERT INTO vaccines (date, supplier, quantity) VALUES (?, ?, ?);""", [vaccine.get_date(), vaccine.get_supplier(), vaccine.get_quantity()])
-            #self._conn.commit()
+            self._conn.commit()
         except Exception as error:
             print(error)
         pass
@@ -24,7 +22,7 @@ class _vaccine_DAO:
     def delete(self, _id):
         try:
             self._conn.execute(""" DELETE FROM vaccines where id=? ;""",_id)
-            #self._conn.commit()
+            self._conn.commit()
         except Exception as error:
             print(error)
             
@@ -42,7 +40,7 @@ class _vaccine_DAO:
             elif vaccine.get_quantity() < amount_to_reduce:
                 self._conn.execute(delete, [vaccine.get_id()])
                 remainder = amount_to_reduce - vaccine.get_quantity()
-            #self._conn.commit()
+            self._conn.commit()
         except Exception as error:
             print(error)
         return remainder      
@@ -59,9 +57,9 @@ class _vaccine_DAO:
             LIMIT 1;                          
             """).fetchone()
             vaccine = vaccine_DTO(vac_row[0], vac_row[1], vac_row[2], vac_row[3])
-            #self._conn.commit()
+            self._conn.commit()
+            cursor.close()
         except Exception as error:
             print(error)
         return vaccine
 
-vaccine_DAO = _vaccine_DAO()
