@@ -4,12 +4,12 @@ Created on Mon Jan 11 13:27:55 2021
 
 @author: luee
 """
-from PersistenceLayer.Repository import repo
+from PersistenceLayer import Repository
 from PersistenceLayer.DTO.supplier_DTO import supplier_DTO
 class _supplier_DAO:
     
     def __init__(self):
-        self._conn = repo.get_connection()
+        self._conn = Repository.repo.get_connection()
     
     def insert(self, supplier):
         try:

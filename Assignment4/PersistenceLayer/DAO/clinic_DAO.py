@@ -4,12 +4,13 @@ Created on Mon Jan 11 13:27:55 2021
 
 @author: luee
 """
-from PersistenceLayer.Repository import repo
+from PersistenceLayer import Repository
 from PersistenceLayer.DTO.clinic_DTO import clinic_DTO
 class _clinic_DAO:
     def __init__(self):
-        self._conn = repo.get_connection()
-    
+        self._conn = Repository.repo.get_connection()
+
+
     def insert(self, clinic):
         try:
             self._conn.execute("""
@@ -18,7 +19,8 @@ class _clinic_DAO:
             #self._conn.commit()
         except Exception as error:
             print(error)
-            
+
+    
     def update_demand(self, location, amount):  # should support it with some triggers before and after about the case of ZERO
         try:
             self._conn.execute(""" 

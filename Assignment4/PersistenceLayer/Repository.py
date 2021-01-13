@@ -6,18 +6,23 @@ Created on Mon Jan 11 15:14:17 2021
 """
 import sqlite3
 import atexit
-from DAO.vaccine_DAO import vaccine_DAO
-from DAO.supplier_DAO import supplier_DAO
-from DAO.clinic_DAO import clinic_DAO
-from DAO.logistic_DAO import logistic_DAO
-from DTO import vaccine_DTO, supplier_DTO, clinic_DTO, logistic_DTO
+from PersistenceLayer.DAO import vaccine_DAO
+from PersistenceLayer.DAO import supplier_DAO
+from PersistenceLayer.DAO import clinic_DAO
+from PersistenceLayer.DAO import logistic_DAO
+from PersistenceLayer.DTO.vaccine_DTO import vaccine_DTO
+from PersistenceLayer.DTO.supplier_DTO import supplier_DTO
+from PersistenceLayer.DTO.clinic_DTO import clinic_DTO
+from PersistenceLayer.DTO.logistic_DTO import logistic_DTO
 
 class _Repository:
     
     def __init__(self):
         self._conn = sqlite3.connect('database.db')
-        pass
-    
+        self._vaccine_DAO = vaccine_DAO.vaccine_DAO
+        self._supplier_DAO = supplier_DAO.supplier_DAO
+        self._clinic_DAO = clinic_DAO.clinic_DAO
+        self._logistic_DAO = logistic_DAO.logistic_DAO
     def get_connection(self):
         return self._conn
     
@@ -67,27 +72,27 @@ class _Repository:
             pass
         pass
     
-    def store(database_records):
+    def store(self, database_records):
         i = 1
-        x = database_records[0][0]
+        x = int(database_records[0][0])
         for number_of_vaccines in range(x):
             record = database_records[i]
-            vaccine = vaccine_DTO(record[0], record[1], record[2], record[3])
-            vaccine_DAO.insert(vaccine)
+            vaccine =  vaccine_DTO(record[0], record[1], record[2], record[3])
+            self._vaccine_DAO.insert(vaccine)
             i+=1
-        x = x + database_records[0][1]            
+        x = x + int(database_records[0][1])
         for number_of_suppliers in range(x):
             record = database_records[i]
             supplier = supplier_DTO(record[0], record[1], record[2])
             supplier_DAO.insert(supplier)
             i+=1
-        x = x + database_records[0][2]
+        x = x + int(database_records[0][2])
         for number_of_clinics in range(x):
             record = database_records[i]
             clinic = clinic_DTO(record[0], record[1], record[2], record[3])
             clinic_DAO.insert(clinic)
             i+=1
-        x = x + database_records[0][3]
+        x = x + int(database_records[0][3])
         for number_of_logistics in range(x):
             record = database_records[i]
             logistic = logistic_DTO(record[0], record[1], record[2], record[3])
@@ -143,7 +148,7 @@ class _Repository:
     def send_shipment(self, location, amount):
         #
         try:
-           clinic_DAO.update_demand(location)
+           self._clinic_DAO.update_demand(location)
            #remove the amount from the vaccines table due to it's old date
            # I have to add a trigger on the case of ZERO in vaccine table.
                       
@@ -172,8 +177,8 @@ class _Repository:
         except Exception as error:
             print(error)
         raise Exception('add line to report(summary file)...')
-        
-# the repository singleton
+    # the repository singleton
+    pass
+
 repo = _Repository()
 atexit.register(repo._close)
-    
