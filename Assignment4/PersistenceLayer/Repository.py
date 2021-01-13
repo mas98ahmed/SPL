@@ -61,7 +61,7 @@ class _Repository:
                 PRIMARY KEY("id" AUTOINCREMENT)
             );
         """)
-            
+            #self._conn.commit()
         except Exception as error:
             print(error) 
             pass
