@@ -13,8 +13,9 @@ class _clinic_DAO:
     def insert(self, clinic):
         try:
             self._conn.execute("""
-                INSERT INTO clinics (id, location, demand, logistic) VALUES (?, ?, ?, ?)
+                INSERT INTO clinics (id, location, demand, logistic) VALUES (?, ?, ?, ?);
             """, [clinic.get_id(), clinic.get_name(), clinic.get_demand(), clinic.get_logistic()])
+            #self._conn.commit()
         except Exception as error:
             print(error)
             
@@ -24,7 +25,8 @@ class _clinic_DAO:
                 UPDATE clinics
                 SET demand = demand - ? 
                 WHERE location = ?                               
-            """, [location, amount])
+           ; """, [location, amount])
+            #self._conn.commit()
         except Exception as error:
             print(error)
             

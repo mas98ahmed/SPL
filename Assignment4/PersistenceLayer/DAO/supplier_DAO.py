@@ -14,8 +14,9 @@ class _supplier_DAO:
     def insert(self, supplier):
         try:
             self._conn.execute("""
-                INSERT INTO suppliers (id, name, logistic) VALUES (?, ?, ?)
-            """, [supplier.get_id()), supplier.get_name()), supplier.get_logistic())])
+                INSERT INTO suppliers (id, name, logistic) VALUES (?, ?, ?);
+            """, [supplier.get_id(), supplier.get_name(), supplier.get_logistic()])
+            #self._conn.commit()
         except Exception as error:
             print(error)
             
@@ -23,7 +24,7 @@ class _supplier_DAO:
         supplier = None
         try:
             cursor = self._conn.cursor() 
-            sup_row = cursor.execute(""" SELECT * FROM suppliers WHERE name=? """,name).fetchone()
+            sup_row = cursor.execute(""" SELECT * FROM suppliers WHERE name=? ;""",name).fetchone()
             supplier = supplier_DTO(sup_row[0], sup_row[1], sup_row[2])
         except Exception as error:
             print(error)
