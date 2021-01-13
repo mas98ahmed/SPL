@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on Mon Jan 11 15:14:17 2021
 
@@ -161,7 +161,7 @@ class _Repository:
                 logistic = supplier.get_logistic()
                 logistic_DAO.update_count_sent(logistic, amount)
             with open("output.txt", "a") as file_object:
-                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
+                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent()%"\n")
         except Exception as error:
             print(error)
         
@@ -174,7 +174,7 @@ class _Repository:
             logistic = supplier.get_logistic()
             logistic_DAO.update_count_received(logistic, amount)
             with open("output.txt", "a") as file_object:
-                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
+                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent()%"\n")
         except Exception as error:
             print(error)
         
