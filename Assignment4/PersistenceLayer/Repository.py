@@ -6,35 +6,35 @@ Created on Mon Jan 11 15:14:17 2021
 """
 import sqlite3
 import atexit
-from PersistenceLayer.DAO import vaccine_DAO
-from PersistenceLayer.DAO import supplier_DAO
-from PersistenceLayer.DAO import clinic_DAO
-from PersistenceLayer.DAO import logistic_DAO
-from PersistenceLayer.DTO.vaccine_DTO import vaccine_DTO
-from PersistenceLayer.DTO.supplier_DTO import supplier_DTO
-from PersistenceLayer.DTO.clinic_DTO import clinic_DTO
-from PersistenceLayer.DTO.logistic_DTO import logistic_DTO
+import datetime
+import vaccine_DAO
+import supplier_DAO
+import clinic_DAO
+import logistic_DAO
+from vaccine_DTO import vaccine_DTO
+from supplier_DTO import supplier_DTO
+from clinic_DTO import clinic_DTO
+from logistic_DTO import logistic_DTO
 
-class _Repository:
-    
+class _Repository:    
     def __init__(self):
         self._conn = sqlite3.connect('database.db')
-        self._vaccine_DAO = vaccine_DAO.vaccine_DAO
-        self._supplier_DAO = supplier_DAO.supplier_DAO
-        self._clinic_DAO = clinic_DAO.clinic_DAO
-        self._logistic_DAO = logistic_DAO.logistic_DAO
+        self.v_DAO = vaccine_DAO._vaccine_DAO(self._conn)
+        self.s_DAO = supplier_DAO._supplier_DAO(self._conn)
+        self.c_DAO = clinic_DAO._clinic_DAO(self._conn)
+        self.l_DAO = logistic_DAO._logistic_DAO(self._conn)
+        pass
+    
     def get_connection(self):
         return self._conn
     
     def _close(self):
         self._conn.commit()
         self._conn.close()
-        
     
     def create_tables(self):
         try:
             self._conn.executescript("""        
-            
             CREATE TABLE logistics (
                 id                 INT     PRIMARY KEY,
                 name     TEXT    NOT NULL,
@@ -58,48 +58,59 @@ class _Repository:
             );
             
             CREATE TABLE vaccines (
-                id      INT,
+                id      INTEGER,
                 date    DATETIME        NOT NULL,
                 supplier    INT,
                 quantity    INT     NOT NULL,
                 FOREIGN KEY(supplier)     REFERENCES suppliers(id),
                 PRIMARY KEY("id" AUTOINCREMENT)
             );
-        """)
-            #self._conn.commit()
+            """)
+            self._conn.commit()
         except Exception as error:
             print(error) 
             pass
         pass
     
     def store(self, database_records):
-        i = 1
-        x = int(database_records[0][0])
-        for number_of_vaccines in range(x):
-            record = database_records[i]
-            vaccine =  vaccine_DTO(record[0], record[1], record[2], record[3])
-            self._vaccine_DAO.insert(vaccine)
-            i+=1
-        x = x + int(database_records[0][1])
-        for number_of_suppliers in range(x):
-            record = database_records[i]
-            supplier = supplier_DTO(record[0], record[1], record[2])
-            supplier_DAO.insert(supplier)
-            i+=1
-        x = x + int(database_records[0][2])
-        for number_of_clinics in range(x):
-            record = database_records[i]
-            clinic = clinic_DTO(record[0], record[1], record[2], record[3])
-            clinic_DAO.insert(clinic)
-            i+=1
-        x = x + int(database_records[0][3])
-        for number_of_logistics in range(x):
-            record = database_records[i]
-            logistic = logistic_DTO(record[0], record[1], record[2], record[3])
-            logistic_DAO.insert(logistic)
-            i+=1
+        print(database_records)
+        print("true")
+        indicator = database_records.pop(0)
+        for i in range(len(indicator)):
+            indicator[i] = int(indicator[i].split('\n')[0])
+        print(indicator)
+        print(database_records)
+        number_of_vaccines = indicator[0]
+        number_of_suppliers = indicator[1]
+        number_of_clinics = indicator[2]
+        number_of_logistics = indicator[3]
+        
+        while(number_of_vaccines > 0):
+            record = database_records.pop(0)
+            # we do not consider the id from the config file.......
+            print(True)
+            print(record[1].replace('âˆ’','-'))
+            vaccine = vaccine_DTO(None, datetime.datetime.strptime(record[1].replace('âˆ’','-'), '%Y-%m-%d'), int(record[2]), int(record[3].split('\n')[0]))
+            self.v_DAO.insert(vaccine)
+            number_of_vaccines-=1
+            pass
+        while(number_of_suppliers > 0):
+            record = database_records.pop(0)
+            supplier = supplier_DTO(int(record[0]), record[1], int(record[2].split('\n')[0]))
+            self.s_DAO.insert(supplier)
+            number_of_suppliers-=1
+        while(number_of_clinics > 0):
+            record = database_records.pop(0)
+            clinic = clinic_DTO(int(record[0]), record[1], int(record[2]), int(record[3].split('\n')[0]))
+            self.c_DAO.insert(clinic)
+            number_of_clinics-=1
+        while(number_of_logistics > 0):
+            record = database_records.pop(0)
+            logistic = logistic_DTO(int(record[0]), record[1], int(record[2]), int(record[3].split('\n')[0]))
+            self.l_DAO.insert(logistic)
+            number_of_logistics-=1
         pass
-      
+    
     def get_total_demand(self):
         output = None
         try:
@@ -110,7 +121,6 @@ class _Repository:
         except Exception as error:
             print(error)
         return output
-
     
     def get_total_inventory(self):
         output = None
@@ -122,48 +132,39 @@ class _Repository:
             print(error)
         return output        
     
-    
     def get_total_sent(self):
         output = None
         try:
             cursor = self._conn.cursor()
-            output = cursor.executescript("""SELECT sum(count_sent)
-            FROM logistics;""").fetchone()[0]
+            output = cursor.executescript("""SELECT sum(count_sent) FROM logistics;""").fetchone()[0]
         except Exception as error:
             print(error)
         return output
-    
     
     def get_total_received(self):
         output = None
         try:
             cursor = self._conn.cursor()
-            output = cursor.executescript("""SELECT sum(count_received)
-            FROM logistics;""").fetchone()[0]
+            output = cursor.executescript("""SELECT sum(count_received) FROM logistics;""").fetchone()[0]
         except Exception as error:
             print(error)
         return output    
     
-    
     def send_shipment(self, location, amount):
-        #
         try:
-           self._clinic_DAO.update_demand(location)
-           #remove the amount from the vaccines table due to it's old date
-           # I have to add a trigger on the case of ZERO in vaccine table.
-                      
-           temp = amount
-           while(temp >0):
-               vaccine = vaccine_DAO.get_older_vaccine()
-               temp = vaccine_DAO.update_amount_and_process(vaccine, temp)
-               supplier = supplier_DAO.get_supplier_by_name(vaccine.get_supplier())
-               logistic = supplier.get_logistic()
-               logistic_DAO.update_count_sent(logistic, amount)
-           with open("output.txt", "a") as file_object:
-               file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
+            self._clinic_DAO.update_demand(location)
+            temp = amount
+            while(temp >0):
+                vaccine = vaccine_DAO.get_older_vaccine()
+                temp = vaccine_DAO.update_amount_and_process(vaccine, temp)
+                supplier = supplier_DAO.get_supplier_by_name(vaccine.get_supplier())
+                logistic = supplier.get_logistic()
+                logistic_DAO.update_count_sent(logistic, amount)
+            with open("output.txt", "a") as file_object:
+                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
         except Exception as error:
             print(error)
-        raise Exception('add line to report(summary file)...')
+        
         
     def receive_shipment(self, name, amount, date):
         try:
@@ -176,9 +177,7 @@ class _Repository:
                 file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
         except Exception as error:
             print(error)
-        raise Exception('add line to report(summary file)...')
-    # the repository singleton
-    pass
+        
 
 repo = _Repository()
 atexit.register(repo._close)
