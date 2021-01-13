@@ -5,7 +5,7 @@ Spyder Editor
 This is a temporary script file.
 """
 #import sys
-from PersistenceLayer import Repository
+import Repository
 
 def database_building(database_records_as_strings):
     database_records = list()
@@ -15,9 +15,8 @@ def database_building(database_records_as_strings):
     Repository.repo.store(database_records)
     pass
 
-
 def manage_orders(orders):
-    for i in range(orders.count):
+    for i in range(len(orders)):
         record = orders[i].split(',')
         if record.count == 2:
             Repository.repo.send_shipment(record[0], record[1])
@@ -34,4 +33,4 @@ def main(config_file, orders_file, output_file):
     pass
 
 if __name__ == '__main__':
-    main("config.txt", "orders.txt", "")
+    main(None, "orders.txt", "")
