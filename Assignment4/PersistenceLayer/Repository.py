@@ -94,6 +94,50 @@ class _Repository:
             logistic_DAO.insert(logistic)
             i+=1
         pass
+      
+    def get_total_demand(self):
+        output = None
+        try:
+            cursor = self._conn.cursor()
+            output = cursor.executescript("""SELECT sum(demand)
+            FROM clinics;""").fetchone()[0]
+            
+        except Exception as error:
+            print(error)
+        return output
+
+    
+    def get_total_inventory(self):
+        output = None
+        try:
+            cursor = self._conn.cursor()
+            output = cursor.executescript(""" SELECT sum(quantity)
+            FROM vaccines; """).fetchone()[0]
+        except Exception as error:
+            print(error)
+        return output        
+    
+    
+    def get_total_sent(self):
+        output = None
+        try:
+            cursor = self._conn.cursor()
+            output = cursor.executescript("""SELECT sum(count_sent)
+            FROM logistics;""").fetchone()[0]
+        except Exception as error:
+            print(error)
+        return output
+    
+    
+    def get_total_received(self):
+        output = None
+        try:
+            cursor = self._conn.cursor()
+            output = cursor.executescript("""SELECT sum(count_received)
+            FROM logistics;""").fetchone()[0]
+        except Exception as error:
+            print(error)
+        return output    
     
     
     def send_shipment(self, location, amount):
@@ -110,8 +154,8 @@ class _Repository:
                supplier = supplier_DAO.get_supplier_by_name(vaccine.get_supplier())
                logistic = supplier.get_logistic()
                logistic_DAO.update_count_sent(logistic, amount)
-            #add line to report(summary file)...
-            
+           with open("output.txt", "a") as file_object:
+               file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
         except Exception as error:
             print(error)
         raise Exception('add line to report(summary file)...')
@@ -123,10 +167,8 @@ class _Repository:
             supplier = supplier_DAO.get_supplier_by_name(name)
             logistic = supplier.get_logistic()
             logistic_DAO.update_count_received(logistic, amount)
-            
-            #add line to report(summary file)...
-            
-            pass
+            with open("output.txt", "a") as file_object:
+                file_object.write(""%self.get_total_inventory()%","%self.get_total_demand()%","%self.get_total_received()%","%self.get_total_sent())
         except Exception as error:
             print(error)
         raise Exception('add line to report(summary file)...')
