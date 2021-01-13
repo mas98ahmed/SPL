@@ -4,24 +4,24 @@ Spyder Editor
 
 This is a temporary script file.
 """
-#import sys
-import Repository
+import sys
+from PersistenceLayer.Repository import repo
 
 def database_building(database_records_as_strings):
     database_records = list()
     for i in range(len(database_records_as_strings)):
         database_records.append(database_records_as_strings[i].split(','))
-    Repository.repo.create_tables()
-    Repository.repo.store(database_records)
+    repo.create_tables()
+    repo.store(database_records)
     pass
 
 def manage_orders(orders):
     for i in range(len(orders)):
         record = orders[i].split(',')
         if record.count == 2:
-            Repository.repo.send_shipment(record[0], record[1])
+            repo.send_shipment(record[0], record[1])
         elif record.count == 3:
-            Repository.repo.receive_shipment(record[0], record[1], record[2])
+            repo.receive_shipment(record[0], record[1], record[2])
 
 def main(config_file, orders_file, output_file):
     with open(config_file,"r") as cfile:
@@ -33,4 +33,4 @@ def main(config_file, orders_file, output_file):
     pass
 
 if __name__ == '__main__':
-    main(None, "orders.txt", "")
+    main(sys.argv[1], sys.argv[2], sys.argv[3])
