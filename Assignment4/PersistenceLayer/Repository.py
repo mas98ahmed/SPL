@@ -157,7 +157,6 @@ class _Repository:
                 amount = self.v_DAO.update_amount_and_process(vaccine, amount)
                 clinic = self.c_DAO.get_clinic_by_location(location)
                 logistic = clinic.get_logistic()
-                print(logistic, temp - amount)
                 self.l_DAO.update_count_sent(logistic, temp-amount)
             
             with open("output.txt", "a") as file_object:
