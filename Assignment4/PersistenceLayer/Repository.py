@@ -84,7 +84,7 @@ class _Repository:
         while(number_of_vaccines > 0):
             record = database_records.pop(0)
             # we do not consider the id from the config file.......
-            vaccine = vaccine_DTO(None, datetime.datetime.strptime(record[1].replace('âˆ’','-'), '%Y-%m-%d'), int(record[2]), int(record[3].split('\n')[0]))
+            vaccine = vaccine_DTO(None, datetime.datetime.strptime(record[1].replace('âˆ’','−'), '%Y−%m−%d'), int(record[2]), int(record[3].split('\n')[0]))
             self.v_DAO.insert(vaccine)
             number_of_vaccines-=1
             pass
@@ -150,12 +150,14 @@ class _Repository:
     def send_shipment(self, location, amount):
         try:
             temp = amount
-            while(temp >0):
+            while(amount >0):
                 vaccine = self.v_DAO.get_older_vaccine()
-                temp = self.v_DAO.update_amount_and_process(vaccine, temp)
+                temp = amount
+                amount = self.v_DAO.update_amount_and_process(vaccine, amount)
                 supplier = self.s_DAO.get_supplier_by_id(vaccine.get_supplier())
                 logistic = supplier.get_logistic()
-            self.l_DAO.update_count_sent(logistic, amount-temp)
+                print(logistic, temp - amount)
+                self.l_DAO.update_count_sent(logistic, temp-amount)
             self.c_DAO.update_demand(location,amount)
             with open("output.txt", "a") as file_object:
                 output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
