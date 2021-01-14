@@ -150,6 +150,7 @@ class _Repository:
     def send_shipment(self, location, amount):
         try:
             temp = amount
+            self.c_DAO.update_demand(location,amount)
             while(amount >0):
                 vaccine = self.v_DAO.get_older_vaccine()
                 temp = amount
@@ -158,7 +159,7 @@ class _Repository:
                 logistic = clinic.get_logistic()
                 print(logistic, temp - amount)
                 self.l_DAO.update_count_sent(logistic, temp-amount)
-            self.c_DAO.update_demand(location,amount)
+            
             with open("output.txt", "a") as file_object:
                 output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
                 file_object.write(output_str)
