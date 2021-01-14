@@ -59,7 +59,7 @@ class _Repository:
             
             CREATE TABLE vaccines (
                 id      INTEGER,
-                date    DATETIME        NOT NULL,
+                date    DATE        NOT NULL,
                 supplier    INT,
                 quantity    INT     NOT NULL,
                 FOREIGN KEY(supplier)     REFERENCES suppliers(id),
