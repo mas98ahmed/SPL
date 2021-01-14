@@ -31,4 +31,13 @@ class _clinic_DAO:
         except Exception as error:
             print(error)
             
-            
+    def get_clinic_by_location(self, location):
+        clinic = None
+        try:
+            cursor = self._conn.cursor() 
+            clinic_row = cursor.execute(""" SELECT * FROM clinics WHERE location=? ;""",[location]).fetchone()
+            clinic = clinic_DTO(clinic_row[0], clinic_row[1], clinic_row[2], clinic_row[3])
+            cursor.close()
+        except Exception as error:
+            print(error)
+        return clinic

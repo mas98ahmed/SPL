@@ -154,8 +154,8 @@ class _Repository:
                 vaccine = self.v_DAO.get_older_vaccine()
                 temp = amount
                 amount = self.v_DAO.update_amount_and_process(vaccine, amount)
-                supplier = self.s_DAO.get_supplier_by_id(vaccine.get_supplier())
-                logistic = supplier.get_logistic()
+                clinic = self.c_DAO.get_clinic_by_location(location)
+                logistic = clinic.get_logistic()
                 print(logistic, temp - amount)
                 self.l_DAO.update_count_sent(logistic, temp-amount)
             self.c_DAO.update_demand(location,amount)
