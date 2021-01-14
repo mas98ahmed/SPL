@@ -22,9 +22,9 @@ def manage_orders(orders):
         if len(record) == 2:
             repo.send_shipment(record[0], int(record[1]))
         elif len(record) == 3:
-            repo.receive_shipment(record[0], int(record[1]), datetime.datetime.strptime(record[2].split('\n')[0].replace('âˆ’','-'), '%Y-%m-%d'))
+            repo.receive_shipment(record[0], int(record[1]), datetime.datetime.strptime(record[2].split('\n')[0].replace('âˆ’','−'), '%Y−%m−%d'))
 
-def main(config_file, orders_file, output_file):
+def main(config_file, orders_file):
     with open(config_file,"r") as cfile:
         lines = cfile.readlines()
         database_building(lines)
@@ -33,4 +33,4 @@ def main(config_file, orders_file, output_file):
         manage_orders(lines)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+    main(sys.argv[1], sys.argv[2])
