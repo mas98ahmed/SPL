@@ -6,7 +6,7 @@ Created on Mon Jan 11 15:14:17 2021
 """
 import sqlite3
 import atexit
-import datetime
+from datetime import datetime
 from PersistenceLayer.DAO.vaccine_DAO import _vaccine_DAO
 from PersistenceLayer.DAO.supplier_DAO import _supplier_DAO
 from PersistenceLayer.DAO.clinic_DAO import _clinic_DAO
@@ -84,7 +84,7 @@ class _Repository:
         while(number_of_vaccines > 0):
             record = database_records.pop(0)
             # we do not consider the id from the config file.......
-            vaccine = vaccine_DTO(None, datetime.datetime.strptime(record[1].replace('âˆ’','−'), '%Y−%m−%d'), int(record[2]), int(record[3].split('\n')[0]))
+            vaccine = vaccine_DTO(None, datetime.strptime(record[1].replace('âˆ’','−'), '%Y−%m−%d').date(), int(record[2]), int(record[3].split('\n')[0]))
             self.v_DAO.insert(vaccine)
             number_of_vaccines-=1
             pass

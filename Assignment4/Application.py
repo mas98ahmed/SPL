@@ -5,7 +5,7 @@ Spyder Editor
 This is a temporary script file.
 """
 import sys
-import datetime
+from datetime import datetime
 from PersistenceLayer.Repository import repo
 
 def database_building(database_records_as_strings):
@@ -22,7 +22,7 @@ def manage_orders(orders):
         if len(record) == 2:
             repo.send_shipment(record[0], int(record[1]))
         elif len(record) == 3:
-            repo.receive_shipment(record[0], int(record[1]), datetime.datetime.strptime(record[2].split('\n')[0].replace('âˆ’','−'), '%Y−%m−%d'))
+            repo.receive_shipment(record[0], int(record[1]), datetime.strptime(record[2].split('\n')[0].replace('âˆ’','−'), '%Y−%m−%d').date())
 
 def main(config_file, orders_file):
     with open(config_file,"r") as cfile:
