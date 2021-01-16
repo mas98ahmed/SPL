@@ -84,7 +84,7 @@ class _Repository:
         while(number_of_vaccines > 0):
             record = database_records.pop(0)
             # we do not consider the id from the config file.......
-            vaccine = vaccine_DTO(None, datetime.strptime(record[1].replace('âˆ’','-'), '%Y-%m-%d').date(), int(record[2]), int(record[3].split('\n')[0]))
+            vaccine = vaccine_DTO(None, datetime.strptime(record[1].replace('âˆ’','−').replace('-','−'), '%Y−%m−%d').date(), int(record[2]), int(record[3].split('\n')[0]))
             self.v_DAO.insert(vaccine)
             number_of_vaccines-=1
             pass
@@ -159,7 +159,7 @@ class _Repository:
                 logistic = clinic.get_logistic()
                 self.l_DAO.update_count_sent(logistic, temp-amount)
             
-            with open("output.txt", "w") as file_object:
+            with open("output.txt", "a") as file_object:
                 output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
                 file_object.write(output_str)
         except Exception as error:
@@ -173,7 +173,7 @@ class _Repository:
             self.v_DAO.insert(vaccine)
             logistic = supplier.get_logistic()
             self.l_DAO.update_count_received(logistic, amount)
-            with open("output.txt", "w") as file_object:
+            with open("output.txt", "a") as file_object:
                 output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
                 file_object.write(output_str)
         except Exception as error:
