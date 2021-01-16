@@ -159,7 +159,7 @@ class _Repository:
                 logistic = clinic.get_logistic()
                 self.l_DAO.update_count_sent(logistic, temp-amount)
             
-            with open("output.txt", "a") as file_object:
+            with open("output.txt", "w") as file_object:
                 output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
                 file_object.write(output_str)
         except Exception as error:
@@ -173,7 +173,7 @@ class _Repository:
             self.v_DAO.insert(vaccine)
             logistic = supplier.get_logistic()
             self.l_DAO.update_count_received(logistic, amount)
-            with open("output.txt", "a") as file_object:
+            with open("output.txt", "w") as file_object:
                 output_str =str(self.get_total_inventory())+','+str(self.get_total_demand())+","+str(self.get_total_received())+","+str(self.get_total_sent())+"\n"
                 file_object.write(output_str)
         except Exception as error:
