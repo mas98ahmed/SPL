@@ -84,7 +84,7 @@ class _Repository:
         while(number_of_vaccines > 0):
             record = database_records.pop(0)
             # we do not consider the id from the config file.......
-            vaccine = vaccine_DTO(None, datetime.strptime(record[1].replace('âˆ’','−').replace('-','−'), '%Y−%m−%d').date(), int(record[2]), int(record[3].split('\n')[0]))
+            vaccine = vaccine_DTO(None, datetime.strptime(record[1].replace('-','−'), '%Y−%m−%d').date(), int(record[2]), int(record[3].split('\n')[0]))
             self.v_DAO.insert(vaccine)
             number_of_vaccines-=1
             pass
